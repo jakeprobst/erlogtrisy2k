@@ -44,10 +44,6 @@ class TextureManager {
         if (renderer is null) {
             throw new Exception("loadFile: no renderer initialized");
         }
-        /*CTexture tex = o.get!CTexture();
-        if (tex is null) {
-            throw new Exception("loadFile: GameObject needs a CTexture.");
-        }*/
 
         Texture tex;
         int* texid = (path in path_texid);

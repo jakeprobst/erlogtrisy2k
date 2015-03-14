@@ -10,17 +10,14 @@ import std.traits;
 
 class Callback {
     void* id;
-    //int id;
     void delegate(Message) func;
 
     this(void* t, void delegate(Message) f) {
-    //this(int t, void delegate(Message) f) {
         id = t;
         func = f;
     }
 
     bool opEquals(void* t) {
-    //bool opEquals(int t) {
         return id == t;
     }
 }
@@ -42,20 +39,12 @@ class MessageBus {
     void register(T, M)(T id, MsgType type, void delegate(M) cb) {
         callbacks[cast(int)type] ~= new Callback(cast(void*)id, cast(void delegate(Message))cb);
     }
-    /*void register(M)(int id, MsgType type, void delegate(M) cb) {
-        callbacks[cast(int)type] ~= new Callback(id, cast(void delegate(Message))cb);
-    }*/
 
     void unregister(T)(T id) {
         foreach(type; callbacks) {
             type.remove(find(type, cast(void)id));
         }
     }
-    /*void unregister(int id) {
-        foreach(type; callbacks) {
-            type.remove(find(type, id));
-        }
-    }*/
 }
 
 

@@ -51,9 +51,5 @@ class GameObject {
     bool has(CType c) {
         return (get(c) !is null);
     }
-    /*bool has(T)() {
-        return (get!T() !is null);
-    }*/
-
 }
 

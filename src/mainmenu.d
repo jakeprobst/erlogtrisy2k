@@ -59,8 +59,6 @@ class MainMenu: Scene {
     }
 
     override void initialize() {
-        //engine.addSystem(new SButton);
-
         bg = new GameObject;
         bg.add(new CPosition(10,10));
 
@@ -102,8 +100,5 @@ class MainMenu: Scene {
         delete bg;
         delete bg2;
         delete btn;
-
-        /*SButton b = engine.removeSystem!SButton();
-        delete b;*/
     }
 }
