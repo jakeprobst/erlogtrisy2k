@@ -55,6 +55,7 @@ class GameObject {
 
     void remove(CType c) {
         components = components.remove(c);
+        _M.send(new MComponentChange(this));
     }
 
     bool has(CType c) {
