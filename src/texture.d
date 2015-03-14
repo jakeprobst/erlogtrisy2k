@@ -19,7 +19,10 @@ struct Texture {
 }
 
 enum Layer {
+    Background,
     Default,
+    Block,
+    BlockText,
 };
 
 class CTexture: Component {
