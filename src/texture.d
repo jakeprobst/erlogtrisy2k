@@ -14,7 +14,7 @@ import std.string;
 
 
 struct Texture {
-    int id;
+    int id = -1;
     int w, h;
 }
 
