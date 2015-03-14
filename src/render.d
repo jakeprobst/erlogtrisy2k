@@ -33,12 +33,18 @@ class SRender: System {
     SortedList!(GameObject) layers;
 
     this(string t, int w, int h) {
+        requires ~= CType.Texture;
+        requires ~= CType.Position;
+
         title = t;
         width = w;
         height = h;
 
-        requires ~= CType.Texture;
-        requires ~= CType.Position;
+        bool layer_cmp(GameObject o1, GameObject o2) {
+           return (o1.get!CTexture().layer > o2.get!CTexture().layer);
+        }
+
+        layers = new SortedList!(GameObject)(&layer_cmp);
     }
 
     ~this() {
