@@ -1,0 +1,9 @@
+{
+	"name": "erlogtrisy2k",
+	"description": "some sort of terrible tetris program for weeaboos",
+	"authors": ["jake"],
+	"dependencies": {
+        "derelict-sdl2": ">=1.1.15",
+        "derelict-gl3": ">=1.0.12"
+	}
+}
