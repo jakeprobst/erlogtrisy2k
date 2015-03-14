@@ -11,7 +11,7 @@ But since people have complained, I`ll at least explain what you need:
 * [dub](http://code.dlang.org/download)
 
 so all you really need to do is run `dub build` and it should grab whatever
-dependancies it needs to run.
+dependencies it needs to run.
 
 
 
