@@ -23,39 +23,6 @@ class Component {
     }
 }
 
-enum TexAction {
-    LoadImage,
-    SetSurface,
-    Nothing,
-}
-
-class CTexture: Component {
-    int texid;
-    int w, h;
-
-
-    /*int texid;
-    SDL_Texture* texture = null;
-    TexAction action = TexAction.Nothing;
-    string loadpath = null;
-    SDL_Surface* surface = null;
-    int w,h;
-
-    this() {
-    }
-    ~this() {
-    }
-
-    void LoadImage(string p) {
-        action = TexAction.LoadImage;
-        loadpath = p;
-    }
-
-    void SetSurface(SDL_Surface* s) {
-        action = TexAction.SetSurface;
-        surface = s;
-    }*/
-}
 
 
 class CPosition: Component {

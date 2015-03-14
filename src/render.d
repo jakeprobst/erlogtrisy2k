@@ -16,8 +16,8 @@ SDL_Rect toRect(CPosition pos, CTexture tex) {
     SDL_Rect r;
     r.x = pos.x;
     r.y = pos.y;
-    r.w = tex.w;
-    r.h = tex.h;
+    r.w = tex.texture.w;
+    r.h = tex.texture.h;
     return r;
 }
 
@@ -68,7 +68,7 @@ class SRender: System {
             CTexture tex = o.get!CTexture();
             CPosition pos = o.get!CPosition();
             SDL_Rect r = toRect(pos,tex);
-            SDL_RenderCopy(renderer, _T.get(tex), null, &r);
+            SDL_RenderCopy(renderer, _T.get(tex.texture), null, &r);
         }
         SDL_RenderPresent(renderer);
     }
