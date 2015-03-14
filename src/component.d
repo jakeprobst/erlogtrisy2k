@@ -9,6 +9,7 @@ enum CType {
     Velocity,
     Input,
     Button,
+    Animation,
     End,
 }
 

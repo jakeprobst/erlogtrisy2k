@@ -7,6 +7,7 @@ import erlogtrisy2k.render;
 import erlogtrisy2k.texture;
 import erlogtrisy2k.input;
 import erlogtrisy2k.mainmenu;
+import erlogtrisy2k.animation;
 
 class ErlogTrisY2K {
     Engine engine;
@@ -16,6 +17,7 @@ class ErlogTrisY2K {
         engine.setRender(new SRender("ErlogTris Y2K", 1280, 720));
         //engine.addSystem(new STexture(engine.get!SRender));
         engine.addSystem(new SInput);
+        engine.addSystem(new SAnimation);
 
 
         engine.pushScene(new MainMenu);
