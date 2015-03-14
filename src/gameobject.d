@@ -39,6 +39,15 @@ class GameObject {
         return null;
     }
 
+    T getAlways(T)() {
+        T c = get!T();
+        if (c is null) {
+            c = new T();
+            add(c);
+        }
+        return c;
+    }
+
     void add(Component c) {
         components ~= c;
         _M.send(new MComponentChange(this));
@@ -52,4 +61,5 @@ class GameObject {
         return (get(c) !is null);
     }
 }
+
 
