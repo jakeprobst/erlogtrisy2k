@@ -64,28 +64,24 @@ bool buttonMouseUp(GameObject o)
 }
 
 
-GameObject MakeButton(string normal, string mouseover, string clicked, int x, int y, void delegate() cb) {
-    GameObject o = new GameObject;
-    o.add(new CPosition(x,y));
+void MakeButton(GameObject o, string normal, string mouseover, string clicked, int x, int y, void delegate() cb) {
+    CPosition pos = o.getAlways!CPosition();
+    pos.x = x;
+    pos.y = y;
 
-    CButton btn = new CButton();
+    CButton btn = o.getAlways!CButton();
     btn.normal = _T.loadFile(normal);
     btn.mouseover = _T.loadFile(mouseover);
     btn.clicked = _T.loadFile(clicked);
     btn.callback = cb;
-    o.add(btn);
 
-    CInput input = new CInput();
+    CInput input = o.getAlways!CInput();
     input.mouse = toDelegate(&buttonMouseOver);
     input.action[InputType.MouseDown][Button.MouseLeft] = toDelegate(&buttonMouseDown);
     input.action[InputType.MouseUp][Button.MouseLeft] = toDelegate(&buttonMouseUp);
-    o.add(input);
 
-    CTexture tex = new CTexture();
+    CTexture tex = o.getAlways!CTexture();
     tex.texture = btn.normal;
-    o.add(tex);
-
-    return o;
 }
 
 
