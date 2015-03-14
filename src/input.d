@@ -122,12 +122,11 @@ class SInput: System {
                 }
             }
             else if (event.type == SDL_MOUSEMOTION) {
-                mouseloop:
                 foreach(obj; contexts) {
                     CInput input = obj.get!CInput();
                     if (input.mouse !is null) {
                         if (input.mouse(obj, event.motion.x, event.motion.y)) {
-                            break mouseloop;
+                            break;
                         }
                     }
                 }
@@ -138,13 +137,12 @@ class SInput: System {
                 continue;
             }
 
-            loop:
             foreach(obj; contexts) {
                 CInput input = obj.get!CInput();
                 if (type in input.action) {
                     if (button in input.action[type]) {
                         if (input.action[type][button](obj)) {
-                            break loop;
+                            break;
                         }
                     }
                 }
