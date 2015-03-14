@@ -7,6 +7,7 @@ import erlogtrisy2k.texture;
 import erlogtrisy2k.messagebus;
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
+import erlogtrisy2k.sortedlist;
 
 import std.stdio;
 import std.string;
@@ -28,6 +29,8 @@ class SRender: System {
     int width, height;
     SDL_Window* window;
     SDL_Renderer* renderer;
+
+    SortedList!(GameObject) layers;
 
     this(string t, int w, int h) {
         title = t;
@@ -58,13 +61,15 @@ class SRender: System {
         _M.send(new MRendererCreated(renderer));
     }
 
-    override void addObject(GameObject) {
+    override void addObject(GameObject o) {
+        layers.insert(o);
     }
-    override void removeObject(GameObject) {
+    override void removeObject(GameObject o) {
+        layers.remove(o);
     }
     override void update() {
         SDL_RenderClear(renderer);
-        foreach(o; objects) {
+        foreach(o; layers) {
             CTexture tex = o.get!CTexture();
             CPosition pos = o.get!CPosition();
             SDL_Rect r = toRect(pos,tex);

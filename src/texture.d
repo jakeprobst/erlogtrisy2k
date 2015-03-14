@@ -18,9 +18,18 @@ struct Texture {
     int w, h;
 }
 
+enum Layer {
+    Default,
+};
 
 class CTexture: Component {
     Texture texture;
+    Layer layer;
+
+    this() {
+        type = CType.Texture;
+        layer = Layer.Default;
+    }
 }
 
 
