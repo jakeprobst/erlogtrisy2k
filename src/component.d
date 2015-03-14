@@ -33,6 +33,9 @@ class CPosition: Component {
         x = a;
         y = b;
     }
+    this() {
+        type = CType.Position;
+    }
 }
 
 
