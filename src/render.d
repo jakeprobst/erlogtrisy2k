@@ -57,7 +57,6 @@ class SRender: System {
         return renderer;
     }
 
-
     override void initialize() {
         DerelictSDL2.load();
         DerelictSDL2Image.load();
@@ -73,13 +72,15 @@ class SRender: System {
     override void removeObject(GameObject o) {
         layers.remove(o);
     }
-    override void update() {
+    override void update(int frame) {
         SDL_RenderClear(renderer);
         foreach(o; layers) {
             CTexture tex = o.get!CTexture();
             CPosition pos = o.get!CPosition();
-            SDL_Rect r = toRect(pos,tex);
-            SDL_RenderCopy(renderer, _T.get(tex.texture), null, &r);
+            if (tex.texture.id != -1) {
+                SDL_Rect r = toRect(pos,tex);
+                SDL_RenderCopy(renderer, _T.get(tex.texture), null, &r);
+            }
         }
         SDL_RenderPresent(renderer);
     }

@@ -50,5 +50,5 @@ class System {
     abstract void initialize();
     abstract void addObject(GameObject);
     abstract void removeObject(GameObject);
-    abstract void update();
+    abstract void update(int);
 }

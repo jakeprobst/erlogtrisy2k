@@ -72,9 +72,9 @@ class Engine {
         return null;
     }
 
-    void update() {
+    void update(int frame) {
         foreach(s; systems) {
-            s.update();
+            s.update(frame);
         }
     }
 
@@ -100,7 +100,7 @@ class Engine {
     void run() {
         float accumulator = 0;
         auto framestart = Clock.currAppTick();
-        int a;
+        int frame;
 
         while (running) {
             const auto curtime = Clock.currAppTick();
@@ -109,11 +109,11 @@ class Engine {
             framestart = curtime;
 
             while (accumulator > DT) {
-                a++;
-                update();
+                frame++;
+                update(frame);
                 accumulator -= DT;
             }
-            render.update();
+            render.update(frame);
         }
     }
 

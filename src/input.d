@@ -97,7 +97,7 @@ class SInput: System {
     override void removeObject(GameObject o) {
         contexts.remove(o);
     }
-    override void update() {
+    override void update(int frame) {
         SDL_Event event;
         while(SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
