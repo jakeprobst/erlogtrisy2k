@@ -4,6 +4,7 @@ import derelict.sdl2.sdl;
 
 
 enum CType {
+    None,
     Texture,
     Position,
     Velocity,
@@ -17,7 +18,7 @@ enum CType {
 
 
 class Component {
-    CType type;
+    CType type = CType.None;
 
     bool opEquals(CType c) {
         return type == c;
