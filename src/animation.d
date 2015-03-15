@@ -54,7 +54,9 @@ class SAnimation : System {
                 anim.lastchange = anim.lastchange + anim.changerate;
 
                 CTexture tex = o.get!CTexture();
-                tex.texture = anim.textures[anim.index++ % anim.textures.length];
+                anim.index++;
+                anim.index %= anim.textures.length;
+                tex.texture = anim.textures[anim.index];
             }
         }
         lastframe = frame;
@@ -69,17 +71,8 @@ void MakeAnimation(GameObject o, string[] images) {
     foreach(i; images) {
         anim.textures ~= _T.loadFile("resources/images/" ~ i);
     }
-
-    CPosition pos = o.getAlways!CPosition();
-    pos.x = 100;
-    pos.y = 100;
-
-    o.add(new CTexture);
-
     anim.changerate = 10;
-
-
-
+    o.add(new CTexture);
 }
 
 
