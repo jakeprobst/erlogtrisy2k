@@ -6,7 +6,9 @@ import erlogtrisy2k.messagebus;
 import erlogtrisy2k.gameobject;
 import erlogtrisy2k.texture;
 import erlogtrisy2k.input;
+import erlogtrisy2k.animation;
 
+import std.stdio;
 import std.functional;
 
 
@@ -15,6 +17,22 @@ class CButton: Component {
     Texture mouseover;
     Texture clicked;
     void delegate() callback;
+
+    /*this() {
+        type = CType.Button;
+    }*/
+}
+
+class CAnimatedButton: Component {
+    Texture[] normal;
+    Texture[] mouseover;
+    Texture[] clicked;
+    void delegate() callback;
+
+    /*this() {
+        type = CType.AnimatedButton;
+    }*/
+
 }
 
 bool buttonMouseOver(GameObject o, int x, int y) {
@@ -70,9 +88,9 @@ void MakeButton(GameObject o, string normal, string mouseover, string clicked, i
     pos.y = y;
 
     CButton btn = o.getAlways!CButton();
-    btn.normal = _T.loadFile(normal);
-    btn.mouseover = _T.loadFile(mouseover);
-    btn.clicked = _T.loadFile(clicked);
+    btn.normal = _T.loadFile("resources/images/" ~ normal);
+    btn.mouseover = _T.loadFile("resources/images/" ~ mouseover);
+    btn.clicked = _T.loadFile("resources/images/" ~ clicked);
     btn.callback = cb;
 
     CInput input = o.getAlways!CInput();
@@ -86,6 +104,86 @@ void MakeButton(GameObject o, string normal, string mouseover, string clicked, i
 
 
 
+bool animatedButtonMouseOver(GameObject o, int x, int y) {
+    CPosition pos = o.get!CPosition();
+    CAnimatedButton btn = o.get!CAnimatedButton();
+    CAnimation anim = o.get!CAnimation();
+    if (x > pos.x && x < pos.x + anim.textures[anim.index].w) {
+        if (y > pos.y && y < pos.y + anim.textures[anim.index].h) {
+            if (anim.textures == btn.normal) {
+                anim.textures = btn.mouseover;
+                //anim.index = 0;
+            }
+            return false;
+        }
+    }
+
+    if (anim.textures != btn.normal) {
+        anim.textures = btn.normal;
+        //anim.index = 0;
+    }
+
+    return false;
+}
+
+
+bool animatedButtonMouseDown(GameObject o)
+{
+    CAnimatedButton btn = o.get!CAnimatedButton();
+    CAnimation anim = o.get!CAnimation();
+
+    if (anim.textures == btn.mouseover) {
+        anim.textures = btn.clicked;
+        //anim.index = 0;
+    }
+
+    return false;
+}
+
+bool animatedButtonMouseUp(GameObject o)
+{
+    CAnimatedButton btn = o.get!CAnimatedButton();
+    CAnimation anim = o.get!CAnimation();
+
+    if (anim.textures == btn.clicked) {
+        btn.callback();
+        anim.textures = btn.mouseover;
+        //anim.index = 0;
+    }
+
+    return false;
+}
+
+
+void MakeAnimatedButton(GameObject o, string[] normal, string[] mouseover, string[] clicked, int x, int y, void delegate() cb)
+{
+    CPosition pos = o.getAlways!CPosition();
+    pos.x = x;
+    pos.y = y;
+
+    CAnimatedButton btn = o.getAlways!CAnimatedButton();
+    foreach(n; normal) {
+        btn.normal ~= _T.loadFile("resources/images/" ~ n);
+    }
+    foreach(m; mouseover) {
+        btn.mouseover ~= _T.loadFile("resources/images/" ~ m);
+    }
+    foreach(c; clicked) {
+        btn.clicked ~= _T.loadFile("resources/images/" ~ c);
+    }
+    btn.callback = cb;
+
+    CInput input = o.getAlways!CInput();
+    input.mouse = toDelegate(&animatedButtonMouseOver);
+    input.action[InputType.MouseDown][Button.MouseLeft] = toDelegate(&animatedButtonMouseDown);
+    input.action[InputType.MouseUp][Button.MouseLeft] = toDelegate(&animatedButtonMouseUp);
+
+    CAnimation anim = o.getAlways!CAnimation();
+    anim.textures = btn.normal;
+    anim.changerate = 10;
+
+    o.add(new CTexture);
+}
 
 
 
