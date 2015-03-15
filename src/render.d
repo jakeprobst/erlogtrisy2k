@@ -41,7 +41,7 @@ class SRender: System {
         height = h;
 
         bool layer_cmp(GameObject o1, GameObject o2) {
-           return (o1.get!CTexture().layer > o2.get!CTexture().layer);
+            return (o1.get!CTexture().layer > o2.get!CTexture().layer);
         }
 
         layers = new SortedList!(GameObject)(&layer_cmp);
