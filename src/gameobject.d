@@ -8,11 +8,14 @@ import std.container;
 import std.algorithm;
 
 class GameObject {
+    static int GID = 0;
+    int id;
     Component[] components;
 
     this() {
         _M.send(new MNewObject(this));
-        }
+        id = GID++;
+    }
     ~this() {
         _M.send(new MObjectDeleted(this));
         foreach(c; components) {
@@ -61,6 +64,10 @@ class GameObject {
     bool has(CType c) {
         return (get(c) !is null);
     }
+
+    /*bool opEquals(GameObject o) {
+        return id == o.id;
+    }*/
 }
 
 

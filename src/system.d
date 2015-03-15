@@ -16,7 +16,6 @@ class System {
     this() {
         _M.register(this, MsgType.ComponentChange, &componentChange);
         _M.register(this, MsgType.ObjectDeleted, &deleteObject);
-
     }
     ~this() {}
 
@@ -30,6 +29,11 @@ class System {
         }
 
         if (add) {
+            foreach(o; objects) {
+                if (o == m.object) {
+                    return;
+                }
+            }
             objects ~= m.object;
             addObject(m.object);
         }
