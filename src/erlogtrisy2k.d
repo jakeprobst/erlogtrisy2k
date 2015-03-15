@@ -6,7 +6,7 @@ import erlogtrisy2k.system;
 import erlogtrisy2k.render;
 import erlogtrisy2k.texture;
 import erlogtrisy2k.input;
-import erlogtrisy2k.mainmenu;
+import erlogtrisy2k.titlescreen;
 import erlogtrisy2k.animation;
 
 class ErlogTrisY2K {
@@ -20,7 +20,7 @@ class ErlogTrisY2K {
         engine.addSystem(new SAnimation);
 
 
-        engine.pushScene(new MainMenu);
+        engine.pushScene(new TitleScreen);
     }
 
     ~this() {
