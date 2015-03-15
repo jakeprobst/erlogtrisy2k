@@ -64,7 +64,7 @@ class SortedList(T) {
 }
 
 
-//fuck urmom
+//fuck you flamercockz
 unittest {
     bool intcmp(int a, int b) {
         return a > b;
