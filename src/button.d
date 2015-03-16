@@ -112,7 +112,8 @@ bool animatedButtonMouseOver(GameObject o, int x, int y) {
         if (y > pos.y && y < pos.y + anim.textures[anim.index].h) {
             if (anim.textures == btn.normal) {
                 anim.textures = btn.mouseover;
-                //anim.index = 0;
+                anim.index = 0;
+                anim.loop = false;
             }
             return false;
         }
@@ -120,7 +121,8 @@ bool animatedButtonMouseOver(GameObject o, int x, int y) {
 
     if (anim.textures != btn.normal) {
         anim.textures = btn.normal;
-        //anim.index = 0;
+        anim.index = 0;
+        anim.loop = true;
     }
 
     return false;
@@ -134,7 +136,8 @@ bool animatedButtonMouseDown(GameObject o)
 
     if (anim.textures == btn.mouseover) {
         anim.textures = btn.clicked;
-        //anim.index = 0;
+        anim.index = 0;
+        anim.loop = true;
     }
 
     return false;
@@ -148,7 +151,8 @@ bool animatedButtonMouseUp(GameObject o)
     if (anim.textures == btn.clicked) {
         btn.callback();
         anim.textures = btn.mouseover;
-        //anim.index = 0;
+        anim.index = 0;
+        anim.loop = true;
     }
 
     return false;
