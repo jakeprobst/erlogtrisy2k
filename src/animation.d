@@ -21,10 +21,6 @@ class CAnimation : Component {
     }
 }
 
-
-
-
-
 class SAnimation : System {
     int lastframe = 0;
 
@@ -40,6 +36,7 @@ class SAnimation : System {
     }
     override void addObject(GameObject o) {
         o.get!CAnimation().lastchange = lastframe;
+        o.get!CTexture().texture = o.get!CAnimation().textures[0];
     }
     override void removeObject(GameObject o) {
     }
@@ -47,6 +44,10 @@ class SAnimation : System {
         foreach(o; objects) {
             CAnimation anim = o.get!CAnimation();
             if (!anim.animating) {
+                continue;
+            }
+
+            if (!anim.loop && anim.index == anim.textures.length-1) {
                 continue;
             }
 
