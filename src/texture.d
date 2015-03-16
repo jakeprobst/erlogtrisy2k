@@ -10,12 +10,30 @@ import erlogtrisy2k.messagebus;
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
 
+import std.stdio;
 import std.string;
 
 
-struct Texture {
+class Texture {
     int id = -1;
     int w, h;
+
+    this(int tid) {
+        id = tid;
+        _T.incRef(id);
+    }
+
+    this(Texture t) {
+        _T.decRef(id);
+        id = t.id;
+        _T.incRef(id);
+        w = t.w;
+        h = t.h;
+    }
+
+    ~this() {
+        _T.decRef(id);
+    }
 }
 
 enum Layer {
@@ -26,12 +44,16 @@ enum Layer {
 };
 
 class CTexture: Component {
-    Texture texture;
+    Texture texture = null;
     Layer layer;
 
     this() {
         type = CType.Texture;
         layer = Layer.Default;
+    }
+
+    ~this() {
+        delete texture;
     }
 }
 
@@ -50,6 +72,10 @@ class TextureManager {
 
     }
     ~this() {
+        writeln("unfreed textures:");
+        foreach(texid, refcount; texid_refcount) {
+            writefln("%d: %d", texid, refcount);
+        }
     }
 
     Texture loadFile(string path) {
@@ -60,41 +86,57 @@ class TextureManager {
         Texture tex;
         int* texid = (path in path_texid);
         if (texid is null) {
-            SDL_Texture* texture = IMG_LoadTexture(renderer, path.toStringz());
-            tex.id = TID++;
+            //SDL_Texture* texture = IMG_LoadTexture(renderer, path.toStringz());
+            SDL_Texture* texture = IMG_LoadTexture(renderer, path.ptr);
+            tex = new Texture(TID++);
             texid_texture[tex.id] = texture;
+            path_texid[path] = tex.id;
         }
         else {
-            tex.id = *texid;
-            texid_refcount[*texid]++;
+            if (!(path_texid[path] in texid_refcount)) {
+                //SDL_Texture* texture = IMG_LoadTexture(renderer, path.toStringz());
+                SDL_Texture* texture = IMG_LoadTexture(renderer, path.ptr);
+                tex = new Texture(TID++);
+                texid_texture[tex.id] = texture;
+                path_texid[path] = tex.id;
+            }
+            else {
+                tex = new Texture(path_texid[path]);
+            }
         }
 
         SDL_QueryTexture(get(tex), null, null, &tex.w, &tex.h);
         return tex;
-
     }
 
     void objectDeleted(MObjectDeleted m) {
-        CTexture tex = m.object.get!CTexture();
-        if (tex) {
-            unloadTexture(tex.texture);
-        }
     }
 
     SDL_Texture* get(Texture tex) {
         return texid_texture[tex.id];
     }
 
-    void unloadTexture(Texture tex) {
-        if (tex.id != -1) {
-            texid_refcount[tex.id]--;
-            if (texid_refcount[tex.id] == 0) {
-                SDL_DestroyTexture(texid_texture[tex.id]);
-                texid_refcount.remove(tex.id);
-                texid_texture.remove(tex.id);
-            }
-            tex.id = -1;
+    void incRef(int id) {
+        if (id == -1) {
+            return;
         }
+        texid_refcount[id]++;
+    }
+
+    void decRef(int id) {
+        if (!(id in texid_refcount) || (id == -1)) {
+            return;
+        }
+        texid_refcount[id]--;
+        if (texid_refcount[id] == 0) {
+            unloadTexture(id);
+        }
+    }
+
+    void unloadTexture(int id) {
+        SDL_DestroyTexture(texid_texture[id]);
+        texid_refcount.remove(id);
+        texid_texture.remove(id);
     }
 
     void setRenderer(MRendererCreated m) {
