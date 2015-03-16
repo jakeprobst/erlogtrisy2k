@@ -8,6 +8,8 @@ import erlogtrisy2k.texture;
 import erlogtrisy2k.input;
 import erlogtrisy2k.sprite;
 import erlogtrisy2k.animation;
+import erlogtrisy2k.gamemenu;
+import erlogtrisy2k.util;
 
 import std.stdio;
 import std.functional;
@@ -15,8 +17,7 @@ import std.functional;
 
 class TitleScreen: Scene {
     GameObject background;
-    GameObject an;
-    GameObject asdf;
+    GameObject startbutton;
 
     this() {
     }
@@ -25,38 +26,34 @@ class TitleScreen: Scene {
 
     }
 
-    void oshtson() {
-        writeln("oshtson");
+    void startGame() {
+        engine.pushScene(new GameMenu());
     }
-
-
 
     override void initialize() {
         background = new GameObject;
         MakeSprite(background, "titlescreen/titlescreen.png", 0, 0);
         background.get!CTexture().layer = Layer.Background;
 
-
-        an = new GameObject;
-        MakeAnimation(an, ["red.png", "blue.png", "yellow.png", "cyan.png", "purple.png", "red.png"]);
-        CPosition pos = an.getAlways!CPosition();
-        pos.x = 300;
-        pos.y = 300;
-
-
-        asdf = new GameObject;
-        MakeAnimatedButton(asdf, ["red.png", "blue.png", "yellow.png"], ["cyan.png", "purple.png", "red.png"], ["gray.png", "cyan.png", "purple.png"] , 100, 100, &oshtson);
+        startbutton = new GameObject;
+        MakeAnimatedButton(startbutton, ["titlescreen/start_n1.png"],
+                                        "titlescreen/start_m%d.png".expandString(1, 5),
+                                        ["titlescreen/start_c1.png"],
+                                        200, 250, &startGame);
+        startbutton.get!CAnimation().changerate = 5;
+        startbutton.get!CAnimation().loop = false;
     }
 
     override void suspend() {
+        destroy();
     }
 
     override void unsuspend() {
+        initialize();
     }
 
     override void destroy() {
         delete background;
-        delete an;
-        delete asdf;
+        delete startbutton;
     }
 }
