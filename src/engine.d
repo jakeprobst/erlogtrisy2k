@@ -26,6 +26,9 @@ class Engine {
     System[] systems;
     Scene[] scenes;
 
+    Scene pushscene = null;
+    bool popscene = false;
+
     this() {
         _M.register(this, MsgType.QuitProgram, &quit);
     }
@@ -79,21 +82,33 @@ class Engine {
     }
 
     void pushScene(Scene s) {
-        if (scenes.length > 0) {
-            scenes[$-1].suspend();
-        }
-        s.setEngine(this);
-        s.initialize();
-        scenes ~= s;
+        pushscene = s;
     }
 
     void popScene() {
-        Scene s = scenes.back();
-        s.destroy();
-        delete s;
-        scenes.popBack();
-        if (scenes.length > 0) {
-            scenes[$-1].unsuspend();
+        popscene = true;
+    }
+
+    void checkSceneChange() {
+        if (pushscene) {
+            if (scenes.length > 0) {
+                scenes[$-1].suspend();
+            }
+            pushscene.setEngine(this);
+            pushscene.initialize();
+            scenes ~= pushscene;
+            pushscene = null;
+        }
+
+        if (popscene) {
+            Scene s = scenes.back();
+            s.destroy();
+            delete s;
+            scenes.popBack();
+            if (scenes.length > 0) {
+                scenes[$-1].unsuspend();
+            }
+            popscene = false;
         }
     }
 
@@ -112,6 +127,8 @@ class Engine {
                 frame++;
                 update(frame);
                 accumulator -= DT;
+
+                checkSceneChange();
             }
             render.update(frame);
         }
