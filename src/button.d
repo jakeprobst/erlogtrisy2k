@@ -18,9 +18,11 @@ class CButton: Component {
     Texture clicked;
     void delegate() callback;
 
-    /*this() {
-        type = CType.Button;
-    }*/
+    ~this() {
+        delete normal;
+        delete mouseover;
+        delete clicked;
+    }
 }
 
 class CAnimatedButton: Component {
@@ -29,10 +31,17 @@ class CAnimatedButton: Component {
     Texture[] clicked;
     void delegate() callback;
 
-    /*this() {
-        type = CType.AnimatedButton;
-    }*/
-
+    ~this() {
+        foreach(n; normal){
+            delete n;
+        }
+        foreach(m; mouseover){
+            delete m;
+        }
+        foreach(c; clicked){
+            delete c;
+        }
+    }
 }
 
 bool buttonMouseOver(GameObject o, int x, int y) {
