@@ -21,6 +21,10 @@ class CAnimation : Component {
     }
 }
 
+
+
+
+
 class SAnimation : System {
     int lastframe = 0;
 
@@ -36,7 +40,7 @@ class SAnimation : System {
     }
     override void addObject(GameObject o) {
         o.get!CAnimation().lastchange = lastframe;
-        o.get!CTexture().texture = o.get!CAnimation().textures[0];
+        o.get!CTexture().texture = new Texture(o.get!CAnimation().textures[0]);
     }
     override void removeObject(GameObject o) {
     }
@@ -57,7 +61,8 @@ class SAnimation : System {
                 CTexture tex = o.get!CTexture();
                 anim.index++;
                 anim.index %= anim.textures.length;
-                tex.texture = anim.textures[anim.index];
+                delete tex.texture;
+                tex.texture = new Texture(anim.textures[anim.index]);
             }
         }
         lastframe = frame;

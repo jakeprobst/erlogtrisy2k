@@ -100,8 +100,13 @@ unittest {
     list.remove(22);
     assert(list == [12]);
 
+    // Test removing last element
+    list.remove(12);
+    assert(list == []);
+
     // Test min and max insertions
     list.insert(int.max);
+    list.insert(12);
     list.insert(6);
     list.insert(int.min);
 
