@@ -18,7 +18,7 @@ const string DEFAULTFONT = "resources/default.ttf";
 //const int DEFAULTSIZE = 12;
 const int POINTTOPIXEL = 64; // 64 point = 1 px
 
-struct GlyphCache {
+private struct GlyphCache {
     ubyte data[];
     int w, h;
     long xadvance;
@@ -39,7 +39,7 @@ struct GlyphCache {
     }
 }
 
-class FontCache {
+private class FontCache {
     FT_Library library;
     FT_Face face;
     GlyphCache[wchar][int] cache; // cache[size][character]
@@ -88,64 +88,49 @@ class FontCache {
 }
 
 
-class TextRender {
-    int size = 12;
-    Color color = Color(0,0,0);
 
-    this(int s, Color c) {
-        size = s;
-        color = c;
+private ubyte[] colorText(ubyte[] data, Color c) {
+    ubyte[] outbuf;
+    foreach(d; data) {
+        outbuf ~= d;
+        outbuf ~= c.b;
+        outbuf ~= c.g;
+        outbuf ~= c.r;
     }
-
-    ~this() {
-    }
-
-
-    ubyte[] colorText(ubyte[] data, Color c) {
-        ubyte[] outbuf;
-        foreach(d; data) {
-            outbuf ~= d;
-            outbuf ~= c.b;
-            outbuf ~= c.g;
-            outbuf ~= c.r;
-        }
-        return outbuf;
-    }
-
-
-
-    void render(GameObject o, string str) {
-        auto utf = str.toUTF16();
-        CTexture tex = o.getAlways!CTexture();
-        o.getAlways!CPosition();
-
-        int width = _F.getStringWidth(utf, size);
-        int height = _F.getHeight(size);
-        int xoffset = 0;
-
-        ubyte[] data = new ubyte[height*width];
-
-        foreach(c; utf) {
-            GlyphCache glyph = _F.getGlyph(c, size);
-            for(int x = 0; x < glyph.w; x++) {
-                for(int y = 0; y < glyph.h; y++) {
-                    int px = x + glyph.left + xoffset;
-                    int py = y - glyph.top + size;
-
-                    if (py < 0 || py >= height || px < 0 || px >= width) {
-                        continue;
-                    }
-                    data[py*width + px] = glyph.data[y*glyph.w + x];
-
-                }
-            }
-            xoffset += glyph.xadvance;
-        }
-
-        tex.texture = _T.makeTexture(colorText(data, color), width, height);
-    }
+    return outbuf;
 }
 
+
+void renderText(GameObject o, string str, int size, Color color) {
+    auto utf = str.toUTF16();
+    CTexture tex = o.getAlways!CTexture();
+    o.getAlways!CPosition();
+
+    int width = _F.getStringWidth(utf, size);
+    int height = _F.getHeight(size);
+    int xoffset = 0;
+
+    ubyte[] data = new ubyte[height*width];
+
+    foreach(c; utf) {
+        GlyphCache glyph = _F.getGlyph(c, size);
+        for(int x = 0; x < glyph.w; x++) {
+            for(int y = 0; y < glyph.h; y++) {
+                int px = x + glyph.left + xoffset;
+                int py = y - glyph.top + size;
+
+                if (py < 0 || py >= height || px < 0 || px >= width) {
+                    continue;
+                }
+                data[py*width + px] = glyph.data[y*glyph.w + x];
+
+            }
+        }
+        xoffset += glyph.xadvance;
+    }
+
+    tex.texture = _T.makeTexture(colorText(data, color), width, height);
+}
 
 
 
