@@ -4,6 +4,7 @@
 	"authors": ["jake"],
 	"dependencies": {
         "derelict-sdl2": ">=1.1.15",
-        "derelict-gl3": ">=1.0.12"
+        "derelict-gl3": ">=1.0.12",
+        "derelict-ft": ">=1.0.2"
 	}
 }
