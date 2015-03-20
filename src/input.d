@@ -33,6 +33,7 @@ enum Button {
     Right,
     Space,
     Enter,
+    Escape,
 
     MouseLeft,
     MouseRight,
@@ -54,6 +55,7 @@ enum Button[int] ButtonLookup = [
     SDLK_RIGHT : Button.Right,
     SDLK_SPACE : Button.Space,
     SDLK_RETURN : Button.Enter,
+    SDLK_ESCAPE : Button.Escape,
 
     SDL_BUTTON_LEFT : Button.MouseLeft,
     SDL_BUTTON_RIGHT : Button.MouseRight,
