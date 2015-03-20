@@ -81,7 +81,7 @@ class SInput: System {
         requires ~= CType.Input;
 
         bool input_cmp(GameObject o1, GameObject o2) {
-           return (o1.get!CInput().priority > o2.get!CInput().priority);
+           return (o1.get!CInput().priority < o2.get!CInput().priority);
         }
 
         contexts = new SortedList!(GameObject)(&input_cmp);

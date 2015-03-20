@@ -22,7 +22,7 @@ class SortedList(T) {
 
     void insert(T item) {
         for(int i = 0; i < data.length; i++) {
-            if (!cmp_lt(item, data[i])) {
+            if (cmp_lt(item, data[i])) {
                 data = data[0..i] ~ item ~ data[i..$];
                 return;
             }
@@ -67,7 +67,7 @@ class SortedList(T) {
 //fuck you flamercockz
 unittest {
     bool intcmp(int a, int b) {
-        return a > b;
+        return a < b;
     }
 
     auto list = new SortedList!(int)(&intcmp);
