@@ -1,5 +1,8 @@
 module erlogtrisy2k.component;
 
+import erlogtrisy2k.gameobject;
+
+
 import derelict.sdl2.sdl;
 
 
@@ -11,6 +14,7 @@ enum CType {
     Input,
     Button,
     Animation,
+    Parent,
     End,
 }
 
@@ -27,24 +31,21 @@ class Component {
 
 
 
-class CPosition: Component {
-    int x,y;
 
-    this(int a, int b) {
-        type = CType.Position;
-        x = a;
-        y = b;
-    }
-    this() {
-        type = CType.Position;
+/*class CParent : Component {
+    GameObject parent = null;
+
+    this(GameObject p) {
+        type = CType.Parent
+        parent = p;
     }
 }
 
+class CChildren : Component {
+    GameObject[] children;
 
 
-
-
-
+}*/
 
 
 

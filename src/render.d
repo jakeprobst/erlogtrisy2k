@@ -4,6 +4,7 @@ import erlogtrisy2k.system;
 import erlogtrisy2k.gameobject;
 import erlogtrisy2k.component;
 import erlogtrisy2k.texture;
+import erlogtrisy2k.position;
 import erlogtrisy2k.messagebus;
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
@@ -15,8 +16,8 @@ import std.string;
 
 SDL_Rect toRect(CPosition pos, CTexture tex) {
     SDL_Rect r;
-    r.x = pos.x;
-    r.y = pos.y;
+    r.x = pos.xreal;
+    r.y = pos.yreal;
     r.w = tex.texture.w;
     r.h = tex.texture.h;
     return r;
@@ -72,17 +73,17 @@ class SRender: System {
     override void removeObject(GameObject o) {
         layers.remove(o);
     }
+
     override void update(int frame) {
         SDL_RenderClear(renderer);
         foreach(o; layers) {
             CTexture tex = o.get!CTexture();
             CPosition pos = o.get!CPosition();
-            if (tex.texture.id != -1) {
+            if ((tex.texture !is null) && (tex.texture.id != -1)) {
                 SDL_Rect r = toRect(pos,tex);
                 SDL_RenderCopy(renderer, _T.get(tex.texture), null, &r);
             }
         }
         SDL_RenderPresent(renderer);
     }
-
 }

@@ -8,17 +8,16 @@ import erlogtrisy2k.texture;
 import erlogtrisy2k.input;
 import erlogtrisy2k.titlescreen;
 import erlogtrisy2k.animation;
+import erlogtrisy2k.position;
 
 class ErlogTrisY2K {
     Engine engine;
     this() {
         engine = new Engine;
-        //engine.addSystem(new SRender("ErlogTris Y2K", 1280, 720));
         engine.setRender(new SRender("ErlogTris Y2K", 800, 500));
-        //engine.addSystem(new STexture(engine.get!SRender));
         engine.addSystem(new SInput);
+        engine.addSystem(new SPosition);
         engine.addSystem(new SAnimation);
-
 
         engine.pushScene(new TitleScreen);
     }
