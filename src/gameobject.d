@@ -65,9 +65,11 @@ class GameObject {
         return (get(c) !is null);
     }
 
-    /*bool opEquals(GameObject o) {
-        return id == o.id;
-    }*/
+    override bool opEquals(Object o) {
+        GameObject b = cast(GameObject)o;
+
+        return id == b.id;
+    }
 }
 
 
