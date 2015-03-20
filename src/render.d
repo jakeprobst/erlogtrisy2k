@@ -4,7 +4,6 @@ import erlogtrisy2k.system;
 import erlogtrisy2k.gameobject;
 import erlogtrisy2k.component;
 import erlogtrisy2k.texture;
-import erlogtrisy2k.position;
 import erlogtrisy2k.messagebus;
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
@@ -16,8 +15,8 @@ import std.string;
 
 SDL_Rect toRect(CPosition pos, CTexture tex) {
     SDL_Rect r;
-    r.x = pos.xreal;
-    r.y = pos.yreal;
+    r.x = pos.x;
+    r.y = pos.y;
     r.w = tex.texture.w;
     r.h = tex.texture.h;
     return r;

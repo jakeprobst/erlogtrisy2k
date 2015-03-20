@@ -3,7 +3,6 @@ module erlogtrisy2k.textrender;
 import erlogtrisy2k.gameobject;
 import erlogtrisy2k.component;
 import erlogtrisy2k.texture;
-import erlogtrisy2k.position;
 import erlogtrisy2k.util;
 
 import derelict.freetype.ft;

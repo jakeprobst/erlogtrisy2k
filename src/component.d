@@ -14,7 +14,6 @@ enum CType {
     Input,
     Button,
     Animation,
-    Parent,
     End,
 }
 
@@ -29,23 +28,20 @@ class Component {
     }
 }
 
+class CPosition: Component {
+    int x, y;
 
-
-
-/*class CParent : Component {
-    GameObject parent = null;
-
-    this(GameObject p) {
-        type = CType.Parent
-        parent = p;
+    this(int a, int b) {
+        type = CType.Position;
+        x = a;
+        y = b;
+    }
+    this() {
+        type = CType.Position;
     }
 }
 
-class CChildren : Component {
-    GameObject[] children;
 
-
-}*/
 
 
 
