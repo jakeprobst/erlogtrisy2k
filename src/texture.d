@@ -86,16 +86,14 @@ class TextureManager {
         Texture tex;
         int* texid = (path in path_texid);
         if (texid is null) {
-            //SDL_Texture* texture = IMG_LoadTexture(renderer, path.toStringz());
-            SDL_Texture* texture = IMG_LoadTexture(renderer, path.ptr);
+            SDL_Texture* texture = IMG_LoadTexture(renderer, path.toStringz());
             tex = new Texture(TID++);
             texid_texture[tex.id] = texture;
             path_texid[path] = tex.id;
         }
         else {
             if (!(path_texid[path] in texid_refcount)) {
-                //SDL_Texture* texture = IMG_LoadTexture(renderer, path.toStringz());
-                SDL_Texture* texture = IMG_LoadTexture(renderer, path.ptr);
+                SDL_Texture* texture = IMG_LoadTexture(renderer, path.toStringz());
                 tex = new Texture(TID++);
                 texid_texture[tex.id] = texture;
                 path_texid[path] = tex.id;
@@ -137,6 +135,29 @@ class TextureManager {
         SDL_DestroyTexture(texid_texture[id]);
         texid_refcount.remove(id);
         texid_texture.remove(id);
+    }
+
+    Texture makeTexture(ubyte[] texbytes, int width, int height) {
+        Texture tex = new Texture(TID++);
+        tex.w = width;
+        tex.h = height;
+
+        SDL_Texture* st = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888,
+                                    SDL_TEXTUREACCESS_STREAMING, width, height);
+
+        SDL_SetTextureBlendMode(st, SDL_BLENDMODE_BLEND);
+
+        ubyte* data;
+        int pitch;
+        SDL_LockTexture(st, null, cast(void**)&data, &pitch);
+        for(int i = 0; i < width*height*4; i++) {
+            data[i] = texbytes[i];
+        }
+
+        SDL_UnlockTexture(st);
+        texid_texture[tex.id] = st;
+
+        return tex;
     }
 
     void setRenderer(MRendererCreated m) {
