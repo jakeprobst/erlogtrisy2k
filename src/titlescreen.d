@@ -23,7 +23,6 @@ class TitleScreen: Scene {
     }
 
     ~this() {
-
     }
 
     void startGame() {
@@ -37,7 +36,7 @@ class TitleScreen: Scene {
 
         startbutton = new GameObject;
         MakeAnimatedButton(startbutton, ["titlescreen/start_n1.png"],
-                                        "titlescreen/start_m%d.png".expandString(1, 5),
+                                         "titlescreen/start_m%d.png".expandString(1, 5),
                                         ["titlescreen/start_c1.png"],
                                         200, 250, &startGame);
         startbutton.get!CAnimation().changerate = 5;
