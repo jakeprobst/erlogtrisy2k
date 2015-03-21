@@ -78,7 +78,7 @@ class SRender: System {
         foreach(o; layers) {
             CTexture tex = o.get!CTexture();
             CPosition pos = o.get!CPosition();
-            if ((tex.texture !is null) && (tex.texture.id != -1)) {
+            if ((tex.texture !is null) && (tex.texture.id != -1) && tex.visible) {
                 SDL_Rect r = toRect(pos,tex);
                 SDL_RenderCopy(renderer, _T.get(tex.texture), null, &r);
             }

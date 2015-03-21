@@ -45,11 +45,11 @@ enum Layer {
 
 class CTexture: Component {
     Texture texture = null;
-    Layer layer;
+    Layer layer = Layer.Default;
+    bool visible = true;
 
     this() {
         type = CType.Texture;
-        layer = Layer.Default;
     }
 
     ~this() {
