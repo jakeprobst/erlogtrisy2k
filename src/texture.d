@@ -44,7 +44,7 @@ enum Layer {
 };
 
 class CTexture: Component {
-    Texture texture = null;
+    Texture _texture = null;
     Layer layer = Layer.Default;
     bool visible = true;
 
@@ -52,8 +52,19 @@ class CTexture: Component {
         type = CType.Texture;
     }
 
+    @property Texture texture() {
+        return _texture;
+    }
+
+    @property Texture texture(Texture t) {
+        if (texture !is null) {
+            delete _texture;
+        }
+        return _texture = t;
+    }
+
     ~this() {
-        delete texture;
+        delete _texture;
     }
 }
 

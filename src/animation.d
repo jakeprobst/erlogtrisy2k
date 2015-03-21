@@ -61,7 +61,6 @@ class SAnimation : System {
                 CTexture tex = o.get!CTexture();
                 anim.index++;
                 anim.index %= anim.textures.length;
-                delete tex.texture;
                 tex.texture = new Texture(anim.textures[anim.index]);
             }
         }
