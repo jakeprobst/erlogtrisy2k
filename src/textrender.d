@@ -11,6 +11,7 @@ import derelict.sdl2.sdl;
 import std.stdio;
 import std.utf;
 import std.string;
+import std.algorithm;
 
 
 
@@ -100,11 +101,34 @@ private ubyte[] colorText(ubyte[] data, Color c) {
     return outbuf;
 }
 
+private void trimTextTexture(ref ubyte[] data, ref int width, ref int height) {
+    int hstart, hend;
+
+    outer1: for(int h = 0; h < height; h++) {
+        for(int w = 0; w < width; w++) {
+            if (data[h*width + w] != 0) {
+                break outer1;
+            }
+        }
+        hstart++;
+    }
+
+    outer2: for(int h = height-1; h > 0; h--) {
+        for(int w = 0; w < width; w++) {
+            if (data[h*width + w] != 0) {
+                break outer2;
+            }
+        }
+        hend++;
+    }
+
+    height -= (hstart+hend);
+    data = data[hstart*width..$-(hend*width)];
+}
 
 void renderText(GameObject o, string str, int size, Color color) {
     auto utf = str.toUTF16();
     CTexture tex = o.getAlways!CTexture();
-    o.getAlways!CPosition();
 
     int width = _F.getStringWidth(utf, size);
     int height = _F.getHeight(size);
@@ -123,12 +147,12 @@ void renderText(GameObject o, string str, int size, Color color) {
                     continue;
                 }
                 data[py*width + px] = glyph.data[y*glyph.w + x];
-
             }
         }
         xoffset += glyph.xadvance;
     }
 
+    trimTextTexture(data, width, height);
     tex.texture = _T.makeTexture(colorText(data, color), width, height);
 }
 
