@@ -8,7 +8,7 @@ import erlogtrisy2k.texture;
 import erlogtrisy2k.input;
 import erlogtrisy2k.sprite;
 import erlogtrisy2k.animation;
-import erlogtrisy2k.gamemenu;
+import erlogtrisy2k.optionmenu;
 import erlogtrisy2k.util;
 
 import std.stdio;
@@ -26,7 +26,7 @@ class TitleScreen: Scene {
     }
 
     void startGame() {
-        engine.pushScene(new GameMenu());
+        engine.pushScene(new OptionMenu());
     }
 
     override void initialize() {
@@ -41,6 +41,10 @@ class TitleScreen: Scene {
                                         200, 250, &startGame);
         startbutton.get!CAnimation().changerate = 5;
         startbutton.get!CAnimation().loop = false;
+        startbutton.get!CInput().action[InputType.KeyboardUp][Button.Enter] = delegate bool(GameObject o) {
+                                                                                    startGame();
+                                                                                    return true;
+                                                                                };
     }
 
     override void suspend() {
