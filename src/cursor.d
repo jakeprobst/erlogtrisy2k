@@ -21,10 +21,13 @@ class CCursor : Component {
     GameObject bottomleft;
     GameObject bottomright;
 
+    GameObject selected;
     GameObject[] selections;
     int w, h;
     int xsel = 0, ysel = 0;
     int xoffset = 7, yoffset = 7;
+
+    void delegate(GameObject) onChange = null;
 
     this() {
     }
@@ -38,10 +41,10 @@ class CCursor : Component {
 }
 
 private void moveToItem(CCursor cur) {
-    GameObject selected = cur.selections[cur.ysel*cur.w + cur.xsel];
+    cur.selected = cur.selections[cur.ysel*cur.w + cur.xsel];
 
-    CPosition selpos = selected.get!CPosition();
-    CTexture  seltex = selected.get!CTexture();
+    CPosition selpos = cur.selected.get!CPosition();
+    CTexture  seltex = cur.selected.get!CTexture();
 
     cur.topleft.get!CPosition().x = selpos.x - cur.xoffset;
     cur.topleft.get!CPosition().y = selpos.y - cur.yoffset;
@@ -55,7 +58,9 @@ private void moveToItem(CCursor cur) {
     cur.bottomright.get!CPosition().x = selpos.x + seltex.texture.w + cur.xoffset - cur.bottomright.get!CTexture().texture.w;
     cur.bottomright.get!CPosition().y = selpos.y + seltex.texture.h + cur.yoffset - cur.bottomright.get!CTexture().texture.h;
 
-    //writefln("(%d, %d)", cur.topleft.get!CPosition().x, cur.topleft.get!CPosition().y);
+    if (cur.onChange !is null) {
+        cur.onChange(cur.selected);
+    }
 }
 
 private bool moveCursorUp(GameObject cursor) {
@@ -139,8 +144,21 @@ void makeCursor(GameObject cursor, GameObject[] selections, int width, int heigh
 }
 
 
+void cursorVisible(GameObject cursor, bool vis) {
+    CCursor cur = cursor.getAlways!CCursor();
 
+    cur.topleft.get!CTexture().visible = vis;
+    cur.topright.get!CTexture().visible = vis;
+    cur.bottomleft.get!CTexture().visible = vis;
+    cur.bottomright.get!CTexture().visible = vis;
+}
 
+void cursorReset(GameObject cursor) {
+    CCursor cur = cursor.getAlways!CCursor();
+    cur.xsel = 0;
+    cur.ysel = 0;
+    moveToItem(cur);
+}
 
 
 
