@@ -66,6 +66,7 @@ enum Button[int] ButtonLookup = [
 
 class CInput: Component {
     int priority = Priority.Default;
+    bool active = true;
     bool delegate(GameObject o)[Button][InputType] action;
     bool delegate(GameObject o, int x, int y) mouse = null;
 
@@ -126,7 +127,7 @@ class SInput: System {
             else if (event.type == SDL_MOUSEMOTION) {
                 foreach(obj; contexts) {
                     CInput input = obj.get!CInput();
-                    if (input.mouse !is null) {
+                    if (input.mouse !is null && input.active) {
                         if (input.mouse(obj, event.motion.x, event.motion.y)) {
                             break;
                         }
@@ -141,6 +142,9 @@ class SInput: System {
 
             foreach(obj; contexts) {
                 CInput input = obj.get!CInput();
+                if (!input.active) {
+                    continue;
+                }
                 if (type in input.action) {
                     if (button in input.action[type]) {
                         if (input.action[type][button](obj)) {
