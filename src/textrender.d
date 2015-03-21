@@ -57,14 +57,19 @@ private class FontCache {
 
     int getHeight(int size) {
         FT_Set_Pixel_Sizes(face, 0, size);
-        return cast(int)((face.size.metrics.height-face.size.metrics.descender) / POINTTOPIXEL);
+        //return cast(int)((face.size.metrics.height-face.size.metrics.descender) / POINTTOPIXEL);
+        return cast(int)(face.size.metrics.height / POINTTOPIXEL);
     }
 
     int getStringWidth(wstring str, int size) {
         FT_Set_Pixel_Sizes(face, 0, size);
         int o;
-        foreach(c; str) {
-            o += getGlyph(c, size).xadvance;
+        foreach(line; str.splitLines()) {
+            int to = 0;
+            foreach(c; line) {
+                to += getGlyph(c, size).xadvance;
+            }
+            o = max(o, to);
         }
         return o;
     }
@@ -94,6 +99,7 @@ private ubyte[] colorText(ubyte[] data, Color c) {
     ubyte[] outbuf;
     foreach(d; data) {
         outbuf ~= d;
+        //outbuf ~= cast(byte)(d + 0x10);
         outbuf ~= c.b;
         outbuf ~= c.g;
         outbuf ~= c.r;
@@ -134,14 +140,28 @@ void renderText(GameObject o, string str, int size, Color color) {
     int height = _F.getHeight(size);
     int xoffset = 0;
 
+    int linecount = 1;
+    foreach(c; utf) {
+        if (c == '\n') {
+            linecount++;
+        }
+    }
+    height *= linecount;
+
     ubyte[] data = new ubyte[height*width];
 
+    int line = 0;
     foreach(c; utf) {
+        if (c == '\n') {
+            line++;
+            xoffset = 0;
+            continue;
+        }
         GlyphCache glyph = _F.getGlyph(c, size);
         for(int x = 0; x < glyph.w; x++) {
             for(int y = 0; y < glyph.h; y++) {
                 int px = x + glyph.left + xoffset;
-                int py = y - glyph.top + size;
+                int py = y - glyph.top + size + line*(height/linecount);
 
                 if (py < 0 || py >= height || px < 0 || px >= width) {
                     continue;
