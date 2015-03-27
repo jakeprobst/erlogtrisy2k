@@ -49,7 +49,6 @@ class CTexture: Component {
     bool visible = true;
 
     this() {
-        type = CType.Texture;
     }
 
     @property Texture texture() {
@@ -73,13 +72,13 @@ class TextureManager {
     static int TID = 0;
     SDL_Renderer* renderer = null;
 
-    int[string] path_texid;
+    //int[string] path_texid;
     int[int] texid_refcount;
     SDL_Texture*[int] texid_texture;
 
     this() {
-        _M.register(this, MsgType.ObjectDeleted, &objectDeleted);
-        _M.register(this, MsgType.RenderCreated, &setRenderer);
+        _M.register(this, &objectDeleted);
+        _M.register(this, &setRenderer);
 
     }
     ~this() {
@@ -95,7 +94,7 @@ class TextureManager {
         }
 
         Texture tex;
-        int* texid = (path in path_texid);
+        /*int* texid = (path in path_texid);
         if (texid is null) {
             SDL_Texture* texture = IMG_LoadTexture(renderer, path.toStringz());
             tex = new Texture(TID++);
@@ -112,7 +111,11 @@ class TextureManager {
             else {
                 tex = new Texture(path_texid[path]);
             }
-        }
+        }*/
+
+        SDL_Texture* texture = IMG_LoadTexture(renderer, path.toStringz());
+        tex = new Texture(TID++);
+        texid_texture[tex.id] = texture;
 
         SDL_QueryTexture(get(tex), null, null, &tex.w, &tex.h);
         return tex;

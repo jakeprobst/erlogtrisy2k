@@ -8,6 +8,7 @@ import std.array;
 import std.algorithm;
 import std.traits;
 
+
 class Callback {
     void* id;
     void delegate(Message) func;
@@ -23,26 +24,28 @@ class Callback {
 }
 
 class MessageBus {
-    Callback[][MsgType.max] callbacks;
+    Callback[][string] callbacks;
 
     this() {
     }
     ~this() {}
 
-    void send(Message msg) {
-        foreach(cb; callbacks[msg.type]) {
-            cb.func(msg);
+    void send(M)(M msg) {
+        if (M.classinfo.name in callbacks) {
+            foreach(cb; callbacks[M.classinfo.name]) {
+                cb.func(msg);
+            }
         }
         delete msg;
     }
 
-    void register(T, M)(T id, MsgType type, void delegate(M) cb) {
-        callbacks[cast(int)type] ~= new Callback(cast(void*)id, cast(void delegate(Message))cb);
+    void register(T, M)(T id, void delegate(M) cb) {
+        callbacks[M.classinfo.name] ~= new Callback(cast(void*)id, cast(void delegate(Message))cb);
     }
 
     void unregister(T)(T id) {
         foreach(type; callbacks) {
-            type.remove(find(type, cast(void)id));
+            type = type.remove!(a => a == id);
         }
     }
 }

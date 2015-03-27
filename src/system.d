@@ -10,12 +10,12 @@ import std.algorithm;
 
 
 class System {
-    CType[] requires;
+    string[] requires;
     GameObject[] objects;
 
     this() {
-        _M.register(this, MsgType.ComponentChange, &componentChange);
-        _M.register(this, MsgType.ObjectDeleted, &deleteObject);
+        _M.register(this, &componentChange);
+        _M.register(this, &deleteObject);
     }
     ~this() {}
 

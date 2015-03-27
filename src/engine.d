@@ -30,7 +30,7 @@ class Engine {
     bool popscene = false;
 
     this() {
-        _M.register(this, MsgType.QuitProgram, &quit);
+        _M.register(this, &quit);
     }
 
     ~this() {
@@ -53,15 +53,15 @@ class Engine {
         systems ~= s;
     }
 
-    T removeSystem(T)() {
+    void removeSystem(T)() {
         foreach(s; systems) {
             auto a = cast(T)s;
             if (a !is null) {
                 systems = remove!(a => a == s)(systems);
             }
-            return a;
+            delete a;
         }
-        return null;
+        //return null;
     }
 
     T get(T)() {
