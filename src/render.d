@@ -33,8 +33,8 @@ class SRender: System {
     SortedList!(GameObject) layers;
 
     this(string t, int w, int h) {
-        requires ~= CType.Texture;
-        requires ~= CType.Position;
+        requires ~= CTexture.classinfo.name;
+        requires ~= CPosition.classinfo.name;
 
         title = t;
         width = w;

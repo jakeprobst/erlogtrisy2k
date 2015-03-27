@@ -15,10 +15,6 @@ class CAnimation : Component {
     int lastchange = 0;
     bool animating = true;
     bool loop = true;
-
-    this() {
-        type = CType.Animation;
-    }
 }
 
 
@@ -29,8 +25,8 @@ class SAnimation : System {
     int lastframe = 0;
 
     this() {
-        requires ~= CType.Animation;
-        requires ~= CType.Texture;
+        requires ~= CAnimation.classinfo.name;
+        requires ~= CTexture.classinfo.name;
     }
     ~this() {
 

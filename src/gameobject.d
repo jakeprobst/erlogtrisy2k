@@ -7,6 +7,12 @@ import std.stdio;
 import std.container;
 import std.algorithm;
 
+class NoComponent: Exception {
+    this(string str) {
+        super(str);
+    }
+}
+
 class GameObject {
     static int GID = 0;
     int id;
@@ -23,15 +29,6 @@ class GameObject {
         }
     }
 
-    Component get(CType t) {
-        foreach(c; components) {
-            if (c.type == t) {
-                return c;
-            }
-        }
-        return null;
-    }
-
     T get(T)() {
         foreach(c; components) {
             auto a = cast(T)c;
@@ -39,12 +36,17 @@ class GameObject {
                 return a;
             }
         }
-        return null;
+        //return null;
+        throw new NoComponent(T.classinfo.name);
+        //return null;
     }
 
     T getAlways(T)() {
-        T c = get!T();
-        if (c is null) {
+        T c;
+        try {
+            c = get!T();
+        }
+        catch (NoComponent) {
             c = new T();
             add(c);
         }
@@ -56,13 +58,29 @@ class GameObject {
         _M.send(new MComponentChange(this));
     }
 
-    void remove(CType c) {
+    void remove(T)(T c) {
         components = components.remove(c);
         _M.send(new MComponentChange(this));
     }
 
-    bool has(CType c) {
-        return (get(c) !is null);
+    bool has(string id) {
+        foreach(c; components) {
+            if (id == c.classinfo.name) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool has(T)() {
+        //return (get!T() !is null);
+        try {
+            get!T();
+            return true;
+        }
+        catch (NoComponent e){
+            return false;
+        }
     }
 
     override bool opEquals(Object o) {

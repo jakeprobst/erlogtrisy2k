@@ -69,17 +69,13 @@ class CInput: Component {
     bool active = true;
     bool delegate(GameObject o)[Button][InputType] action;
     bool delegate(GameObject o, int x, int y) mouse = null;
-
-    this() {
-        type = CType.Input;
-    }
 }
 
 class SInput: System {
     SortedList!(GameObject) contexts;
 
     this() {
-        requires ~= CType.Input;
+        requires ~= CInput.classinfo.name;
 
         bool input_cmp(GameObject o1, GameObject o2) {
            return (o1.get!CInput().priority < o2.get!CInput().priority);
