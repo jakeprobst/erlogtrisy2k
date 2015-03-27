@@ -40,8 +40,6 @@ class OptionMenu : Scene {
     ~this() {
     }
 
-
-
     bool goBackToTitle(GameObject o) {
         engine.popScene();
         return true;
@@ -65,8 +63,6 @@ class OptionMenu : Scene {
 
     bool gradeLevelSelected(GameObject o) {
         gradecursor.get!CInput().active = false;
-
-        writeln();
 
         cursorVisible(tetriscursor, true);
         cursorReset(tetriscursor);
@@ -112,7 +108,6 @@ class OptionMenu : Scene {
                                           tetrislevels.countUntil(tetriscursor.get!CCursor().selected),
                                           opt_lazygravity, opt_weightedrandom));
         }
-
         return true;
     }
 
@@ -170,7 +165,6 @@ class OptionMenu : Scene {
         startgame.getAlways!CPosition().x = 620;
         startgame.get!CPosition().y       = 450;
 
-
         gradecursor = new GameObject;
         CInput input = gradecursor.getAlways!CInput();
         input.action[InputType.KeyboardDown][Button.Escape] = &goBackToTitle;
@@ -192,8 +186,6 @@ class OptionMenu : Scene {
         input.active = false;
         makeCursor(optioncursor, [lazygravity, weightedrandom, startgame], 1, 3);
         cursorVisible(optioncursor, false);
-
-
     }
     override void suspend() {
         destroy();
@@ -209,11 +201,13 @@ class OptionMenu : Scene {
         foreach(o; tetrislevels) {
             delete o;
         }
+        tetrislevels = [];
         delete tetriscursor;
         delete tetrislabel;
         foreach(o; gradelevels) {
             delete o;
         }
+        gradelevels = [];
         delete gradelabel;
         delete gradecursor;
         delete background;
