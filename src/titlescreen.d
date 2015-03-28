@@ -30,6 +30,7 @@ class TitleScreen: Scene {
     }
 
     override void initialize() {
+        super.initialize();
         background = new GameObject;
         MakeSprite(background, "titlescreen/titlescreen.png", 0, 0);
         background.get!CTexture().layer = Layer.Background;
@@ -47,16 +48,7 @@ class TitleScreen: Scene {
                                                                                 };
     }
 
-    override void suspend() {
-        destroy();
-    }
-
-    override void unsuspend() {
-        initialize();
-    }
-
     override void destroy() {
-        delete background;
-        delete startbutton;
+        super.destroy();
     }
 }

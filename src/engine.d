@@ -35,7 +35,6 @@ class Engine {
 
     ~this() {
         foreach(s; scenes) {
-            s.destroy();
             delete s;
         }
         foreach(s; systems) {
@@ -92,10 +91,11 @@ class Engine {
     void checkSceneChange() {
         if (pushscene) {
             if (scenes.length > 0) {
-                scenes[$-1].suspend();
+                scenes[$-1].destroy();
             }
             pushscene.setEngine(this);
             pushscene.initialize();
+
             scenes ~= pushscene;
             pushscene = null;
         }
@@ -106,7 +106,7 @@ class Engine {
             delete s;
             scenes.popBack();
             if (scenes.length > 0) {
-                scenes[$-1].unsuspend();
+                scenes[$-1].initialize();
             }
             popscene = false;
         }

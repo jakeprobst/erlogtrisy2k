@@ -112,6 +112,7 @@ class OptionMenu : Scene {
     }
 
     override void initialize() {
+        super.initialize();
         background = new GameObject;
         CTexture tex = background.getAlways!CTexture();
         ubyte[800*500*4] blank;
@@ -187,29 +188,11 @@ class OptionMenu : Scene {
         makeCursor(optioncursor, [lazygravity, weightedrandom, startgame], 1, 3);
         cursorVisible(optioncursor, false);
     }
-    override void suspend() {
-        destroy();
-    }
-    override void unsuspend() {
-        initialize();
-    }
+
     override void destroy() {
-        delete startgame;
-        delete lazygravity;
-        delete weightedrandom;
-        delete optioncursor;
-        foreach(o; tetrislevels) {
-            delete o;
-        }
-        tetrislevels = [];
-        delete tetriscursor;
-        delete tetrislabel;
-        foreach(o; gradelevels) {
-            delete o;
-        }
+        super.destroy();
+
         gradelevels = [];
-        delete gradelabel;
-        delete gradecursor;
-        delete background;
+        tetrislevels = [];
     }
 }

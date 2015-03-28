@@ -55,6 +55,7 @@ class MainGame: Scene {
 
 
     override void initialize() {
+        super.initialize();
         engine.addSystem(new SFallingBlock);
         engine.addSystem(new SGrid);
         engine.addSystem(new SCheckMatches);
@@ -77,17 +78,10 @@ class MainGame: Scene {
 
 
 
-    override void suspend() {
-    }
-    override void unsuspend() {
-    }
     override void destroy() {
+        super.destroy();
         engine.removeSystem!SCheckMatches();
         engine.removeSystem!SGrid();
         engine.removeSystem!SFallingBlock();
-
-        delete grid;
-
-
     }
 }
