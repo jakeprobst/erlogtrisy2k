@@ -6,6 +6,7 @@ import erlogtrisy2k.messagebus;
 import std.stdio;
 import std.container;
 import std.algorithm;
+import std.string;
 
 class NoComponent: Exception {
     this(string str) {
@@ -87,6 +88,17 @@ class GameObject {
         GameObject b = cast(GameObject)o;
 
         return id == b.id;
+    }
+
+    const void toString(scope void delegate(const(char)[]) sink) {
+        sink(this.classinfo.name);
+        sink("(");
+        sink(components[0].classinfo.name);
+        foreach(c; components[1..$]) {
+            sink(", ");
+            sink(c.classinfo.name);
+        }
+        sink(")");
     }
 }
 
