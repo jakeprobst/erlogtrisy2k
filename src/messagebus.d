@@ -7,7 +7,7 @@ import std.container;
 import std.array;
 import std.algorithm;
 import std.traits;
-
+import std.string;
 
 class Callback {
     void* id;
@@ -21,6 +21,10 @@ class Callback {
     bool opEquals(void* t) {
         return id == t;
     }
+
+    override string toString() {
+        return format("%s(%s, %s)", this.classinfo.name, id, func);
+    }
 }
 
 class MessageBus {
@@ -28,7 +32,8 @@ class MessageBus {
 
     this() {
     }
-    ~this() {}
+    ~this() {
+    }
 
     void send(M)(M msg) {
         if (M.classinfo.name in callbacks) {
@@ -44,8 +49,8 @@ class MessageBus {
     }
 
     void unregister(T)(T id) {
-        foreach(type; callbacks) {
-            type = type.remove!(a => a == id);
+        foreach(k,v; callbacks) {
+            callbacks[k] = callbacks[k].remove!(a => a == cast(void*)id);
         }
     }
 }
