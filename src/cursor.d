@@ -31,13 +31,6 @@ class CCursor : Component {
 
     this() {
     }
-    ~this() {
-        delete topleft;
-        delete topright;
-        delete bottomleft;
-        delete bottomright;
-    }
-
 }
 
 private void moveToItem(CCursor cur) {
@@ -131,6 +124,7 @@ void makeCursor(GameObject cursor, GameObject[] selections, int width, int heigh
     cur.bottomright.add(new CPosition);
 
     cur.selections = selections;
+    cur.selected = null;
     cur.w = width;
     cur.h = height;
 
