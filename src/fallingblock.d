@@ -29,7 +29,7 @@ class MNeedNewBlock: Message {
 
 class CFallingBlock: Component {
     BlockType blocktype;
-    int speed= 60*2; // number of frames before dropping
+    int speed= 60; // number of frames before dropping
     int lastdrop;
     GameObject[4] blocks;
 
@@ -101,7 +101,6 @@ class SFallingBlock: System {
         }
 
         CFallingBlock fb = fallingblock.get!CFallingBlock();
-        writefln("%d %d %d", frame, fb.speed, fb.lastdrop);
         if (frame > (fb.speed + fb.lastdrop)) {
             bool movedown = true;
             CGrid g = grid.get!CGrid();
@@ -118,10 +117,6 @@ class SFallingBlock: System {
                     CBlock b = block.get!CBlock();
                     b.y++;
                 }
-
-
-
-
 
                 fb.lastdrop = frame;
             }
