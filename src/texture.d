@@ -14,6 +14,12 @@ import std.stdio;
 import std.string;
 
 
+class LoadImageError: Exception {
+    this(string s) {
+        super(s);
+    }
+}
+
 class Texture {
     int id = -1;
     int w, h;
@@ -114,6 +120,9 @@ class TextureManager {
         }*/
 
         SDL_Texture* texture = IMG_LoadTexture(renderer, path.toStringz());
+        if (texture == null) {
+            throw new LoadImageError("could not load: " ~ path);
+        }
         tex = new Texture(TID++);
         texid_texture[tex.id] = texture;
 
