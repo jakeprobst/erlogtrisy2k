@@ -22,10 +22,9 @@ import std.algorithm;
 
 
 class OptionMenu : Scene {
-    GameObject background;
-    GameObject gradecursor, gradelabel;
+    GameObject gradecursor;
     GameObject[] gradelevels;
-    GameObject tetriscursor, tetrislabel;
+    GameObject tetriscursor;
     GameObject[] tetrislevels;
 
     GameObject lazygravity, weightedrandom, startgame;
@@ -113,17 +112,17 @@ class OptionMenu : Scene {
 
     override void initialize() {
         super.initialize();
-        background = new GameObject;
+        GameObject background = new GameObject;
         CTexture tex = background.getAlways!CTexture();
         ubyte[800*500*4] blank;
         for(int i = 0; i < blank.length; i++) {
             blank[i] = 0xff;
         }
         tex.texture = _T.makeTexture(blank, 800, 500);
-        tex.layer = Layer.Default;
+        tex.layer = Layer.Background;
         background.add(new CPosition(0,0));
 
-        gradelabel = new GameObject;
+        GameObject gradelabel = new GameObject;
         renderText(gradelabel, "Grade Level", 56, Color(0,0,0));
         gradelabel.getAlways!CPosition().x = 20;
         gradelabel.get!CPosition().y       = 20;
@@ -137,7 +136,7 @@ class OptionMenu : Scene {
             gradelevels ~= lvl;
         }
 
-        tetrislabel = new GameObject;
+        GameObject tetrislabel = new GameObject;
         renderText(tetrislabel, "Tetris Level", 56, Color(0,0,0));
         tetrislabel.getAlways!CPosition().x = 20;
         tetrislabel.get!CPosition().y       = 220;
