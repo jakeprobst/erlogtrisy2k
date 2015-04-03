@@ -31,6 +31,12 @@ class CCursor : Component {
 
     this() {
     }
+    void destroy() {
+        delete topleft;
+        delete topright;
+        delete bottomleft;
+        delete bottomright;
+    }
 }
 
 private void moveToItem(CCursor cur) {
