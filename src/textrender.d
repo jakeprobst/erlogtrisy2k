@@ -19,6 +19,12 @@ const string DEFAULTFONT = "resources/default.ttf";
 //const int DEFAULTSIZE = 12;
 const int POINTTOPIXEL = 64; // 64 point = 1 px
 
+class TextRenderError: Exception {
+    this(string message, string file = __FILE__, size_t line = __LINE__, Throwable next = null) {
+        super(message, file, line, next);
+    }
+}
+
 private struct GlyphCache {
     ubyte data[];
     int w, h;
@@ -49,8 +55,16 @@ private class FontCache {
     this() {
         DerelictFT.load();
 
-        FT_Init_FreeType(&library);
-        FT_New_Face(library, DEFAULTFONT.toStringz(), 0, &face);
+        FT_Error error = FT_Init_FreeType(&library);
+        if (error) {
+            throw new TextRenderError("could not initialize freetype");
+        }
+
+        // TODO: make this raise an exception when no font is found
+        error = FT_New_Face(library, DEFAULTFONT.toStringz(), 0, &face);
+        if (error) {
+            throw new TextRenderError("could not load: " ~ DEFAULTFONT);
+        }
     }
     ~this() {
     }
