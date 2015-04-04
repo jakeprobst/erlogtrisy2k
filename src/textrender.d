@@ -60,7 +60,6 @@ private class FontCache {
             throw new TextRenderError("could not initialize freetype");
         }
 
-        // TODO: make this raise an exception when no font is found
         error = FT_New_Face(library, DEFAULTFONT.toStringz(), 0, &face);
         if (error) {
             throw new TextRenderError("could not load: " ~ DEFAULTFONT);

@@ -15,8 +15,8 @@ import std.string;
 
 
 class LoadImageError: Exception {
-    this(string s) {
-        super(s);
+    this(string message, string file = __FILE__, size_t line = __LINE__, Throwable next = null) {
+        super(message, file, line, next);
     }
 }
 
