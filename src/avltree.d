@@ -21,6 +21,10 @@ class AvlTree(K, alias bool ownData = false) {
             delete left;
             delete right;
         }
+
+        bool opEquals(K k) {
+            return key == k;
+        }
     }
 
     int delegate(K, K) cmp_lt;
@@ -111,9 +115,8 @@ class AvlTree(K, alias bool ownData = false) {
         return true;
     }
 
-    bool remove(K key) {
-        return false;
-    }
+
+
 
     private AvlNode _exists(AvlNode node, K key) {
         if (node is null) {
@@ -121,10 +124,10 @@ class AvlTree(K, alias bool ownData = false) {
         }
 
         int cmp = cmp_lt(node.key, key);
-        if (cmp > 0) {
+        if (cmp < 0) {
             return _exists(node.left, key);
         }
-        else if (cmp < 0) {
+        else if (cmp > 0) {
             return _exists(node.right, key);
         }
         else {
@@ -174,6 +177,9 @@ unittest {
 
     writeln(tree);
     writeln(tree.treeroot);
+
+    writeln(tree.exists(2));
+    writeln(tree.exists(5));
 
     foreach(t; tree) {
         writeln(t);
