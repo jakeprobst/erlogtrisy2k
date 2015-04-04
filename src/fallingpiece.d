@@ -200,6 +200,52 @@ bool rotatePieceCW(GameObject o, CGrid grid) {
     return true;
 }
 
+bool rotatePieceCCW(GameObject o, CGrid grid) {
+    CFallingPiece fpiece = o.get!CFallingPiece();
+    int nextrotation = fpiece.rotation - 1;
+    if (nextrotation < 0) {
+        nextrotation = cast(int)fpiece.offset.length;
+    }
+    foreach(int i, block; fpiece.blocks) {
+        CBlock b = block.get!CBlock();
+        int xoff = fpiece.offset[nextrotation][i].x - fpiece.offset[fpiece.rotation][i].x;
+        int yoff = fpiece.offset[nextrotation][i].y - fpiece.offset[fpiece.rotation][i].y;
+
+        if (!verifyOpen(fpiece, b, grid, xoff, yoff)) {
+            return true;
+        }
+    }
+
+    foreach(int i, block; fpiece.blocks) {
+        CBlock b = block.get!CBlock();
+        b.x = fpiece.offset[nextrotation][i].x;
+        b.y = fpiece.offset[nextrotation][i].y;
+    }
+
+    fpiece.rotation = nextrotation;
+    setBlockPosition(o);
+    return true;
+}
+
+bool dropPiece(GameObject o, CGrid grid) {
+    CFallingPiece fpiece = o.get!CFallingPiece();
+
+    int i;
+    outer: for(i = 0; i < GRIDHEIGHT; i++){
+        foreach(block; fpiece.blocks) {
+            CBlock b = block.get!CBlock();
+            if (!verifyOpen(fpiece, b, grid, 0, i)) {
+                break outer;
+            }
+        }
+    }
+    fpiece.y += i-1;
+    fpiece.lastdrop = 0;
+    setBlockPosition(o);
+    return true;
+
+}
+
 void makeFallingPiece(GameObject o, PieceType type, CGrid grid) {
     CFallingPiece fpiece = o.getAlways!CFallingPiece();
 
@@ -219,8 +265,8 @@ void makeFallingPiece(GameObject o, PieceType type, CGrid grid) {
     input.action[InputType.KeyboardDown][Button.Right] = delegate bool(GameObject o) => movePieceRight(o, grid);
     input.action[InputType.KeyboardDown][Button.Down] = delegate bool(GameObject o) => movePieceDown(o, grid);
     input.action[InputType.KeyboardDown][Button.Up] = delegate bool(GameObject o) => rotatePieceCW(o, grid);
-    //input.action[InputType.KeyboardDown][Button.Space] = &rotatePieceCCW;
-
+    input.action[InputType.KeyboardDown][Button.Space] = delegate bool(GameObject o) => rotatePieceCCW(o, grid);
+    input.action[InputType.KeyboardDown][Button.Enter] = delegate bool(GameObject o) => dropPiece(o, grid);
 }
 
 void setBlockPosition(GameObject o) {
