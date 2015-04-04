@@ -1,125 +1,241 @@
-module erlogtrisy2k.fallingblock;
+module erlogtrisy2k.fallingpiece;
 
 
 import erlogtrisy2k.system;
 import erlogtrisy2k.component;
 import erlogtrisy2k.gameobject;
 import erlogtrisy2k.grid;
-import erlogtrisy2k.messages;
+import erlogtrisy2k.messagebus;
 import erlogtrisy2k.block;
+import erlogtrisy2k.pieceoffsets;
+import erlogtrisy2k.nextpiece;
+import erlogtrisy2k.input;
 
 import std.stdio;
 import std.random;
-
-enum BlockType {
-    I,
-    L,
-    J,
-    S,
-    Z,
-    O,
-    T
-}
+import std.algorithm;
+import std.array;
+import std.functional;
 
 
-
-class MNeedNewBlock: Message {
-}
-
-
-class CFallingBlock: Component {
-    BlockType blocktype;
+class CFallingPiece: Component {
+    PieceType type;
     int speed= 60; // number of frames before dropping
     int lastdrop;
-    GameObject[4] blocks;
+    int x, y;
+    int rotation = 0;
+    PieceOffset[] offset;
+    GameObject[] blocks;
+}
 
-    this() {
-        //blocktype = uniform!BlockType();
-        blocktype = BlockType.L;
-
-
-        if (blocktype == BlockType.L) {
-            blocks[0] = new GameObject;
-            makeBlock(blocks[0], blocktype, 6, 0);
-            blocks[1] = new GameObject;
-            makeBlock(blocks[1], blocktype, 6, 1);
-            blocks[2] = new GameObject;
-            makeBlock(blocks[2], blocktype, 6, 2);
-            blocks[3] = new GameObject;
-            makeBlock(blocks[3], blocktype, 7, 2);
-        }
-
-
-
-
-
-
-
-    }
-    ~this() {
+class MNextPiece: Message {
+    PieceType type;
+    this(PieceType t) {
+        type = t;
     }
 }
 
 
-
-
-
-
-class SFallingBlock: System {
+class SFallingPiece: System {
     GameObject grid = null;
-    GameObject fallingblock = null;
+    GameObject fallingpiece = null;
 
     this() {
-
+        _M.register(this, &nextPiece);
     }
     ~this() {
+        _M.unregister(this);
     }
-
-
 
     override void initialize() {
     }
     override void addObject(GameObject o) {
-        if (o.has!CFallingBlock()) {
-            fallingblock = o;
+        if (o.has!CFallingPiece()) {
+            fallingpiece = o;
         }
         else if (o.has!CGrid()) {
             grid = o;
         }
     }
     override void removeObject(GameObject o) {
-        if (o == fallingblock) {
-            fallingblock = null;
+        if (o == fallingpiece) {
+            fallingpiece = null;
         }
         else if (o == grid) {
             grid = null;
         }
     }
+
+    void nextPiece(MNextPiece msg) {
+        fallingpiece = new GameObject;
+        makeFallingPiece(fallingpiece, msg.type, grid.get!CGrid());
+        setBlockPosition(fallingpiece);
+    }
+
     override void update(int frame) {
-        if (fallingblock is null || grid is null) {
+        if (grid is null) {
             return;
         }
+        if (fallingpiece is null) {
+            _M.send(new MNeedNextPiece);
+        }
 
-        CFallingBlock fb = fallingblock.get!CFallingBlock();
-        if (frame > (fb.speed + fb.lastdrop)) {
+        CFallingPiece fpiece = fallingpiece.get!CFallingPiece();
+        if (frame > (fpiece.speed + fpiece.lastdrop)) {
             bool movedown = true;
             CGrid g = grid.get!CGrid();
-            foreach(block; fb.blocks) {
+            foreach(block; fpiece.blocks) {
                 CBlock b = block.get!CBlock();
-                if (g.blocks[b.x][b.y+1] !is null || b.y+1 > HEIGHT) {
+
+                if (b.x < 0 || b.y < 0) {
+                    continue;
+                }
+
+                if (b.y + 1 > GRIDHEIGHT-1) {
+                    movedown = false;
+                    break;
+
+                }
+                if ((g.blocks[b.x][b.y+1] !is null) && !(fpiece.blocks.count(g.blocks[b.x][b.y+1]))) {
                     movedown = false;
                     break;
                 }
             }
 
             if (movedown) {
-                foreach(block; fb.blocks) {
-                    CBlock b = block.get!CBlock();
-                    b.y++;
-                }
-
-                fb.lastdrop = frame;
+                fpiece.y++;
+                setBlockPosition(fallingpiece);
+                fpiece.lastdrop = frame;
+            }
+            else {
+                delete fallingpiece;
+                fallingpiece = null;
             }
         }
     }
 }
+
+bool verifyOpen(CFallingPiece fpiece, CBlock block, CGrid grid, int xoff, int yoff) {
+    if (!(0 <= block.x+xoff && block.x+xoff <= GRIDWIDTH-1)) {
+        return false;
+    }
+    if (!(0 <= block.y+yoff && block.y+yoff <= GRIDHEIGHT-1)) {
+        return false;
+    }
+
+    if (!(fpiece.blocks.canFind(grid.blocks[block.x+xoff][block.y+yoff]))
+            && (grid.blocks[block.x+xoff][block.y+yoff] !is null)) {
+        return false;
+    }
+
+    return true;
+}
+
+bool movePieceLeft(GameObject o, CGrid grid) {
+    CFallingPiece fpiece = o.get!CFallingPiece();
+
+    foreach(block; fpiece.blocks) {
+        CBlock b = block.get!CBlock();
+        if (!verifyOpen(fpiece, b, grid, -1, 0)) {
+            return true;
+        }
+    }
+
+    fpiece.x--;
+    setBlockPosition(o);
+    return true;
+}
+
+bool movePieceRight(GameObject o, CGrid grid) {
+    CFallingPiece fpiece = o.get!CFallingPiece();
+
+    foreach(block; fpiece.blocks) {
+        CBlock b = block.get!CBlock();
+        if (!verifyOpen(fpiece, b, grid, 1, 0)) {
+            return true;
+        }
+    }
+
+    fpiece.x++;
+    setBlockPosition(o);
+    return true;
+}
+
+bool movePieceDown(GameObject o, CGrid grid) {
+    CFallingPiece fpiece = o.get!CFallingPiece();
+
+    foreach(block; fpiece.blocks) {
+        CBlock b = block.get!CBlock();
+        if (!verifyOpen(fpiece, b, grid, 0, 1)) {
+            return true;
+        }
+    }
+
+    fpiece.y++;
+    setBlockPosition(o);
+    return true;
+}
+
+bool rotatePieceCW(GameObject o, CGrid grid) {
+    CFallingPiece fpiece = o.get!CFallingPiece();
+    int nextrotation = (fpiece.rotation + 1) % cast(int)fpiece.offset.length;
+    foreach(int i, block; fpiece.blocks) {
+        CBlock b = block.get!CBlock();
+        int xoff = fpiece.offset[nextrotation][i].x - fpiece.offset[fpiece.rotation][i].x;
+        int yoff = fpiece.offset[nextrotation][i].y - fpiece.offset[fpiece.rotation][i].y;
+
+        if (!verifyOpen(fpiece, b, grid, xoff, yoff)) {
+            return true;
+        }
+    }
+
+    foreach(int i, block; fpiece.blocks) {
+        CBlock b = block.get!CBlock();
+        b.x = fpiece.offset[nextrotation][i].x;
+        b.y = fpiece.offset[nextrotation][i].y;
+    }
+
+    fpiece.rotation = nextrotation;
+    setBlockPosition(o);
+    return true;
+}
+
+void makeFallingPiece(GameObject o, PieceType type, CGrid grid) {
+    CFallingPiece fpiece = o.getAlways!CFallingPiece();
+
+    fpiece.type = type;
+    fpiece.offset = getOffset(fpiece.type);
+    fpiece.x = 6;
+    fpiece.y = 0;
+
+    fpiece.blocks.length = 4;
+    foreach(i; 0..4) {
+        fpiece.blocks[i] = new GameObject;
+        makeBlock(fpiece.blocks[i], type, fpiece.offset[0][i].x, fpiece.offset[0][i].y);
+    }
+
+    CInput input = o.getAlways!CInput();
+    input.action[InputType.KeyboardDown][Button.Left] = delegate bool(GameObject o) => movePieceLeft(o, grid);
+    input.action[InputType.KeyboardDown][Button.Right] = delegate bool(GameObject o) => movePieceRight(o, grid);
+    input.action[InputType.KeyboardDown][Button.Down] = delegate bool(GameObject o) => movePieceDown(o, grid);
+    input.action[InputType.KeyboardDown][Button.Up] = delegate bool(GameObject o) => rotatePieceCW(o, grid);
+    //input.action[InputType.KeyboardDown][Button.Space] = &rotatePieceCCW;
+
+}
+
+void setBlockPosition(GameObject o) {
+    CFallingPiece fpiece = o.getAlways!CFallingPiece();
+
+    foreach(i; 0..4) {
+        CBlock block = fpiece.blocks[i].get!CBlock();
+        block.x = fpiece.x + fpiece.offset[fpiece.rotation][i].x;
+        block.y = fpiece.y + fpiece.offset[fpiece.rotation][i].y;
+    }
+}
+
+
+
+
+
+
+

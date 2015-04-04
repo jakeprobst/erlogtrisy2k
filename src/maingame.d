@@ -6,8 +6,10 @@ import erlogtrisy2k.scene;
 import erlogtrisy2k.gameobject;
 import erlogtrisy2k.block;
 import erlogtrisy2k.component;
+import erlogtrisy2k.texture;
 
-import erlogtrisy2k.fallingblock;
+import erlogtrisy2k.fallingpiece;
+import erlogtrisy2k.nextpiece;
 import erlogtrisy2k.grid;
 import erlogtrisy2k.checkmatches;
 import erlogtrisy2k.input;
@@ -24,6 +26,7 @@ class MainGame: Scene {
     int grade, level;
     bool gravity, weightedrandom;
 
+    NextPiece nextpiece;
     GameObject grid;
     //GameObject[] blocks;
 
@@ -42,11 +45,13 @@ class MainGame: Scene {
     }
 
 
-    void makeNewPiece() {
+    /*void makeNextPiece() {
         GameObject piece = new GameObject;
-        piece.add(new CFallingBlock);
+        makeNextBlock(piece);
+        //piece.add(new CFallingBlock);
 
-    }
+
+    }*/
 
     /*bool goback(GameObject o) {
         engine.popScene();
@@ -56,16 +61,27 @@ class MainGame: Scene {
 
     override void initialize() {
         super.initialize();
-        engine.addSystem(new SFallingBlock);
+        engine.addSystem(new SFallingPiece);
+        //engine.addSystem(new SNextPiece);
         engine.addSystem(new SGrid);
-        engine.addSystem(new SCheckMatches);
+        //engine.addSystem(new SCheckMatches);
+
+        nextpiece = new NextPiece;
+
+        GameObject background = new GameObject;
+        CTexture tex = background.getAlways!CTexture();
+        tex.texture = _T.loadFile("resources/images/maingame/background.png");
+        tex.layer = Layer.Background;
+        background.add(new CPosition(0,0));
+
 
         grid = new GameObject;
-        grid.add(new CGrid);
-        grid.add(new CPosition);
+        makeGrid(grid);
 
 
-        makeNewPiece();
+        //GameObject nextpiece = new GameObject;
+        //makeNextPiece(nextpiece);
+        //makeFallingPiece(nextpiece, PieceType.L);
 
 
 
@@ -80,8 +96,9 @@ class MainGame: Scene {
 
     override void destroy() {
         super.destroy();
-        engine.removeSystem!SCheckMatches();
+        //engine.removeSystem!SCheckMatches();
+        delete nextpiece;
         engine.removeSystem!SGrid();
-        engine.removeSystem!SFallingBlock();
+        engine.removeSystem!SFallingPiece();
     }
 }
