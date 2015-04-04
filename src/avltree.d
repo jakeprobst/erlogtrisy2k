@@ -3,39 +3,28 @@ module erlogtrisy2k.avltree;
 import std.stdio;
 import std.algorithm;
 
-
-/*class ItemNotFound: Exception {
-    this(string message, string file = __FILE__, size_t line = __LINE__, Throwable next = null) {
-        super(message, file, line, next);
-    }
-}*/
-
-class AvlNode(K, alias bool ownData) {
-    K key;
-    int height = 1;
-    AvlNode!(K, ownData) left = null;
-    AvlNode!(K, ownData) right = null;
-
-    this(K k) {
-        key = k;
-    }
-
-    ~this() {
-        static if (ownData) {
-            delete key;
-        }
-        delete left;
-        delete right;
-    }
-}
-
-
-
-
 class AvlTree(K, alias bool ownData = false) {
-    alias Node = AvlNode!(K, ownData);
+    class AvlNode {
+        K key;
+        int height = 1;
+        AvlNode left = null;
+        AvlNode right = null;
+
+        this(K k) {
+            key = k;
+        }
+
+        ~this() {
+            static if (ownData) {
+                delete key;
+            }
+            delete left;
+            delete right;
+        }
+    }
+
     int delegate(K, K) cmp_lt;
-    Node treeroot = null;
+    AvlNode treeroot = null;
 
     this(int delegate(K, K) cmp) {
         cmp_lt = cmp;
@@ -45,22 +34,22 @@ class AvlTree(K, alias bool ownData = false) {
         delete treeroot;
     }
 
-    int _height(Node node) {
+    private int _height(AvlNode node) {
         if (node is null) {
             return 0;
         }
         return node.height;
     }
 
-    int _balance(Node node) {
+    private int _balance(AvlNode node) {
         if (node is null) {
             return 0;
         }
         return _height(node.left) - _height(node.right);
     }
 
-    private Node _rotateLeft(Node node) {
-        Node tmp = node.right;
+    private AvlNode _rotateLeft(AvlNode node) {
+        AvlNode tmp = node.right;
         node.right = tmp.left;
         tmp.left = node;
 
@@ -69,8 +58,8 @@ class AvlTree(K, alias bool ownData = false) {
         return tmp;
     }
 
-    private Node _rotateRight(Node node) {
-        Node tmp = node.left;
+    private AvlNode _rotateRight(AvlNode node) {
+        AvlNode tmp = node.left;
         node.left = tmp.right;
         tmp.right = node;
 
@@ -79,7 +68,7 @@ class AvlTree(K, alias bool ownData = false) {
         return tmp;
     }
 
-    private Node _insert(Node root, Node node) {
+    private AvlNode _insert(AvlNode root, AvlNode node) {
         if (root is null) {
             return node;
         }
@@ -116,7 +105,7 @@ class AvlTree(K, alias bool ownData = false) {
     }
 
     bool insert(K key) {
-        auto node = new Node(key);
+        auto node = new AvlNode(key);
 
         treeroot = _insert(treeroot, node);
         return true;
@@ -126,7 +115,7 @@ class AvlTree(K, alias bool ownData = false) {
         return false;
     }
 
-    private Node _exists(Node node, K key) {
+    private AvlNode _exists(AvlNode node, K key) {
         if (node is null) {
             return null;
         }
@@ -145,7 +134,7 @@ class AvlTree(K, alias bool ownData = false) {
     }
 
     bool exists(K key) {
-        Node node = _exists(treeroot, key);
+        AvlNode node = _exists(treeroot, key);
         if (node is null) {
             return false;
         }
@@ -154,7 +143,7 @@ class AvlTree(K, alias bool ownData = false) {
 
 
 
-    void subApply(Node node, int delegate(ref K) func) {
+    private void subApply(AvlNode node, int delegate(ref K) func) {
         if (node is null) {
             return;
         }
@@ -163,12 +152,10 @@ class AvlTree(K, alias bool ownData = false) {
         subApply(node.right, func);
     }
 
-
     int opApply(int delegate(ref K) func) {
         subApply(treeroot, func);
         return 1;
     }
-
 }
 
 
@@ -194,5 +181,4 @@ unittest {
 
 
     delete tree;
-
 }
