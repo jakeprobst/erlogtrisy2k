@@ -3,6 +3,7 @@ module erlogtrisy2k.engine;
 import erlogtrisy2k.messagebus;
 import erlogtrisy2k.system;
 import erlogtrisy2k.scene;
+import erlogtrisy2k.memory;
 
 import std.stdio;
 import core.time;
@@ -35,20 +36,20 @@ class Engine {
 
     ~this() {
         foreach(s; scenes) {
-            delete s;
+            unmake(s);
         }
         foreach(s; systems) {
-            delete s;
+            unmake(s);
         }
     }
 
     void setRender(System s) {
-        s.initialize();
+        s.start();
         render = s;
     }
 
     void addSystem(System s) {
-        s.initialize();
+        s.start();
         systems ~= s;
     }
 
@@ -58,7 +59,7 @@ class Engine {
             if (a !is null) {
                 systems = remove!(a => a == s)(systems);
             }
-            delete a;
+            unmake(a);
         }
         //return null;
     }
@@ -91,10 +92,10 @@ class Engine {
     void checkSceneChange() {
         if (pushscene) {
             if (scenes.length > 0) {
-                scenes[$-1].destroy();
+                scenes[$-1].stop();
             }
             pushscene.setEngine(this);
-            pushscene.initialize();
+            pushscene.start();
 
             scenes ~= pushscene;
             pushscene = null;
@@ -102,11 +103,11 @@ class Engine {
 
         if (popscene) {
             Scene s = scenes.back();
-            s.destroy();
-            delete s;
+            s.stop();
+            unmake(s);
             scenes.popBack();
             if (scenes.length > 0) {
-                scenes[$-1].initialize();
+                scenes[$-1].start();
             }
             popscene = false;
         }

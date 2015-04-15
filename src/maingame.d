@@ -13,6 +13,8 @@ import erlogtrisy2k.nextpiece;
 import erlogtrisy2k.grid;
 import erlogtrisy2k.checkmatches;
 import erlogtrisy2k.input;
+import erlogtrisy2k.memory;
+import erlogtrisy2k.kanjidatabase;
 
 import std.stdio;
 
@@ -28,6 +30,7 @@ class MainGame: Scene {
 
     NextPiece nextpiece;
     GameObject grid;
+
     //GameObject[] blocks;
 
 
@@ -46,9 +49,9 @@ class MainGame: Scene {
 
 
     /*void makeNextPiece() {
-        GameObject piece = new GameObject;
+        GameObject piece = make!GameObject;
         makeNextBlock(piece);
-        //piece.add(new CFallingBlock);
+        //piece.add(make!CFallingBlock);
 
 
     }*/
@@ -59,27 +62,27 @@ class MainGame: Scene {
     }*/
 
 
-    override void initialize() {
-        super.initialize();
-        engine.addSystem(new SFallingPiece);
-        //engine.addSystem(new SNextPiece);
-        engine.addSystem(new SGrid);
-        //engine.addSystem(new SCheckMatches);
+    override void start() {
+        super.start();
+        engine.addSystem(make!SFallingPiece);
+        //engine.addSystem(make!SNextPiece);
+        engine.addSystem(make!SGrid);
+        //engine.addSystem(make!SCheckMatches);
 
-        nextpiece = new NextPiece;
+        nextpiece = make!NextPiece;
 
-        GameObject background = new GameObject;
+        GameObject background = make!GameObject;
         CTexture tex = background.getAlways!CTexture();
         tex.texture = _T.loadFile("resources/images/maingame/background.png");
         tex.layer = Layer.Background;
-        background.add(new CPosition(0,0));
+        background.add(make!CPosition(0,0));
 
 
-        grid = new GameObject;
+        grid = make!GameObject;
         makeGrid(grid);
 
 
-        //GameObject nextpiece = new GameObject;
+        //GameObject nextpiece = make!GameObject;
         //makeNextPiece(nextpiece);
         //makeFallingPiece(nextpiece, PieceType.L);
 
@@ -94,10 +97,9 @@ class MainGame: Scene {
 
 
 
-    override void destroy() {
-        super.destroy();
-        //engine.removeSystem!SCheckMatches();
-        delete nextpiece;
+    override void stop() {
+        super.stop();
+        unmake(nextpiece);
         engine.removeSystem!SGrid();
         engine.removeSystem!SFallingPiece();
     }

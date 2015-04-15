@@ -10,6 +10,7 @@ import erlogtrisy2k.input;
 import erlogtrisy2k.textrender;
 import erlogtrisy2k.cursor;
 import erlogtrisy2k.util;
+import erlogtrisy2k.memory;
 
 import erlogtrisy2k.titlescreen;
 import erlogtrisy2k.maingame;
@@ -103,16 +104,16 @@ class OptionMenu : Scene {
             }
         }
         if (cur.selected == startgame) {
-            engine.pushScene(new MainGame(gradelevels.countUntil(gradecursor.get!CCursor().selected),
+            engine.pushScene(make!MainGame(gradelevels.countUntil(gradecursor.get!CCursor().selected),
                                           tetrislevels.countUntil(tetriscursor.get!CCursor().selected),
                                           opt_lazygravity, opt_weightedrandom));
         }
         return true;
     }
 
-    override void initialize() {
-        super.initialize();
-        GameObject background = new GameObject;
+    override void start() {
+        super.start();
+        GameObject background = make!GameObject;
         CTexture tex = background.getAlways!CTexture();
         ubyte[800*500*4] blank;
         for(int i = 0; i < blank.length; i++) {
@@ -120,15 +121,15 @@ class OptionMenu : Scene {
         }
         tex.texture = _T.makeTexture(blank, 800, 500);
         tex.layer = Layer.Background;
-        background.add(new CPosition(0,0));
+        background.add(make!CPosition(0,0));
 
-        GameObject gradelabel = new GameObject;
+        GameObject gradelabel = make!GameObject;
         renderText(gradelabel, "Grade Level", 56, Color(0,0,0));
         gradelabel.getAlways!CPosition().x = 20;
         gradelabel.get!CPosition().y       = 20;
 
         foreach(n; 0..10) {
-            GameObject lvl = new GameObject;
+            GameObject lvl = make!GameObject;
             renderText(lvl, to!string(n+1), 42, Color(0,0,0));
             lvl.getAlways!CPosition().x = 50 + (75*(n%5));
             lvl.get!CPosition().y       = 90 + (60*(n/5));
@@ -136,13 +137,13 @@ class OptionMenu : Scene {
             gradelevels ~= lvl;
         }
 
-        GameObject tetrislabel = new GameObject;
+        GameObject tetrislabel = make!GameObject;
         renderText(tetrislabel, "Tetris Level", 56, Color(0,0,0));
         tetrislabel.getAlways!CPosition().x = 20;
         tetrislabel.get!CPosition().y       = 220;
 
         foreach(n; 0..10) {
-            GameObject lvl = new GameObject;
+            GameObject lvl = make!GameObject;
             renderText(lvl, to!string(n+1), 42, Color(0,0,0));
             lvl.getAlways!CPosition().x = 50 + (75*(n%5));
             lvl.get!CPosition().y       = 290 + (60*(n/5));
@@ -150,28 +151,28 @@ class OptionMenu : Scene {
             tetrislevels ~= lvl;
         }
 
-        lazygravity = new GameObject;
+        lazygravity = make!GameObject;
         renderText(lazygravity, "Lazy\nGravity", 32, Color(0,0,0));
         lazygravity.getAlways!CPosition().x = 600;
         lazygravity.get!CPosition().y       = 20;
 
-        weightedrandom = new GameObject;
+        weightedrandom = make!GameObject;
         renderText(weightedrandom, "Weighted\nRandom", 32, Color(0,0,0));
         weightedrandom.getAlways!CPosition().x = 600;
         weightedrandom.get!CPosition().y       = 150;
 
-        startgame = new GameObject;
+        startgame = make!GameObject;
         renderText(startgame, "Start Game", 32, Color(0,0,0));
         startgame.getAlways!CPosition().x = 620;
         startgame.get!CPosition().y       = 450;
 
-        gradecursor = new GameObject;
+        gradecursor = make!GameObject;
         CInput input = gradecursor.getAlways!CInput();
         input.action[InputType.KeyboardDown][Button.Escape] = &goBackToTitle;
         input.action[InputType.KeyboardDown][Button.Enter] = &gradeLevelSelected;
         makeCursor(gradecursor, gradelevels, 5, 2);
 
-        tetriscursor = new GameObject;
+        tetriscursor = make!GameObject;
         input = tetriscursor.getAlways!CInput();
         input.action[InputType.KeyboardDown][Button.Escape] = &goBackToGradeSelect;
         input.action[InputType.KeyboardDown][Button.Enter] = &tetrisLevelSelected;
@@ -179,7 +180,7 @@ class OptionMenu : Scene {
         makeCursor(tetriscursor, tetrislevels, 5, 2);
         cursorVisible(tetriscursor, false);
 
-        optioncursor = new GameObject;
+        optioncursor = make!GameObject;
         input = optioncursor.getAlways!CInput();
         input.action[InputType.KeyboardDown][Button.Escape] = &goBackToTetrisSelect;
         input.action[InputType.KeyboardDown][Button.Enter] = &selectOption;
@@ -188,8 +189,8 @@ class OptionMenu : Scene {
         cursorVisible(optioncursor, false);
     }
 
-    override void destroy() {
-        super.destroy();
+    override void stop() {
+        super.stop();
 
         gradelevels = [];
         tetrislevels = [];

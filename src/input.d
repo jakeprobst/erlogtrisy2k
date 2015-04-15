@@ -7,6 +7,7 @@ import erlogtrisy2k.messagebus;
 import erlogtrisy2k.gameobject;
 import erlogtrisy2k.component;
 import erlogtrisy2k.sortedlist;
+import erlogtrisy2k.memory;
 
 import derelict.sdl2.sdl;
 
@@ -15,7 +16,7 @@ import core.exception;
 
 enum Priority {
     Default,
-};
+}
 
 enum InputType {
     None,
@@ -81,14 +82,14 @@ class SInput: System {
            return (o1.get!CInput().priority < o2.get!CInput().priority);
         }
 
-        contexts = new SortedList!(GameObject)(&input_cmp);
+        contexts = make!(SortedList!(GameObject))(&input_cmp);
     }
 
     ~this() {
-        delete contexts;
+        unmake(contexts);
     }
 
-    override void initialize() {}
+    override void start() {}
 
     override void addObject(GameObject o) {
         contexts.insert(o);
@@ -100,7 +101,7 @@ class SInput: System {
         SDL_Event event;
         while(SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
-                _M.send(new MQuitProgram());
+                _M.send(make!MQuitProgram());
             }
 
             InputType type = InputType.None;

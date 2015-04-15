@@ -32,9 +32,8 @@ private enum string[PieceType] piecetooffset = [
 ];
 
 
-
 private PieceOffset[][PieceType] pieceoffsets;
-
+int a;
 
 
 void loadOffset(PieceType type) {

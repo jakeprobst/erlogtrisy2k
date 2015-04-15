@@ -9,6 +9,12 @@ import std.stdio;
 import std.algorithm;
 
 
+// TODO: for systems that have no requirements (ones that want specific things)
+// all objects in the game get added to the objects list.
+// they don't get iterated over so its not that bad, but it makes removal slow
+// so maybe make addObject return a bool and only add to objects if it returns
+// true?
+
 class System {
     string[] requires;
     GameObject[] objects;
@@ -51,7 +57,7 @@ class System {
     }
 
 
-    abstract void initialize();
+    abstract void start();
     abstract void addObject(GameObject);
     abstract void removeObject(GameObject);
     abstract void update(int);

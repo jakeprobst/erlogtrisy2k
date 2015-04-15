@@ -1,9 +1,11 @@
 module erlogtrisy2k.block;
 
+import erlogtrisy2k.memory;
 import erlogtrisy2k.gameobject;
 import erlogtrisy2k.component;
 import erlogtrisy2k.texture;
 import erlogtrisy2k.fallingpiece;
+
 
 import std.traits;
 
@@ -36,7 +38,7 @@ Texture[PieceType] texlookup;
 
 static ~this() {
     foreach(type, tex; texlookup) {
-        delete tex;
+        unmake(tex);
     }
 }
 
@@ -55,14 +57,15 @@ Texture getBlockTexture(PieceType type) {
 void makeBlock(GameObject block, PieceType type, int x, int y)
 {
     CBlock b = block.getAlways!CBlock();
-    b.x = x;
+    b.x = x; 
     b.y = y;
 
     CTexture tex = block.getAlways!CTexture();
-    tex.texture = new Texture(getBlockTexture(type));
+    tex.texture = make!Texture(getBlockTexture(type));
     tex.layer = Layer.Block;
 
     CPosition pos = block.getAlways!CPosition();
 
 
 }
+

@@ -26,7 +26,7 @@ class TextRenderError: Exception {
 }
 
 private struct GlyphCache {
-    ubyte data[];
+    ubyte[] data;
     int w, h;
     long xadvance;
     int left, top;
@@ -50,7 +50,6 @@ private class FontCache {
     FT_Library library;
     FT_Face face;
     GlyphCache[wchar][int] cache; // cache[size][character]
-
 
     this() {
         DerelictFT.load();

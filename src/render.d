@@ -8,6 +8,7 @@ import erlogtrisy2k.messagebus;
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
 import erlogtrisy2k.sortedlist;
+import erlogtrisy2k.memory;
 
 import std.stdio;
 import std.string;
@@ -44,7 +45,7 @@ class SRender: System {
             return (o1.get!CTexture().layer < o2.get!CTexture().layer);
         }
 
-        layers = new SortedList!(GameObject)(&layer_cmp);
+        layers = make!(SortedList!(GameObject))(&layer_cmp);
     }
 
     ~this() {
@@ -57,13 +58,13 @@ class SRender: System {
         return renderer;
     }
 
-    override void initialize() {
+    override void start() {
         DerelictSDL2.load();
         DerelictSDL2Image.load();
         SDL_Init(SDL_INIT_VIDEO);
         window = SDL_CreateWindow(title.toStringz, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
         renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-        _M.send(new MRendererCreated(renderer));
+        _M.send(make!MRendererCreated(renderer));
     }
 
     override void addObject(GameObject o) {

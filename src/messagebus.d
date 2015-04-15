@@ -1,6 +1,7 @@
 module erlogtrisy2k.messagebus;
 
 public import erlogtrisy2k.messages;
+import erlogtrisy2k.memory;
 
 import std.stdio;
 import std.container;
@@ -41,7 +42,7 @@ class MessageBus {
                 cb.func(msg);
             }
         }
-        delete msg;
+        unmake(msg);
     }
 
     void register(T, M)(T id, void delegate(M) cb) {

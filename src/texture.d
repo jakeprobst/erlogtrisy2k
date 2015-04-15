@@ -6,6 +6,7 @@ import erlogtrisy2k.engine;
 import erlogtrisy2k.component;
 import erlogtrisy2k.render;
 import erlogtrisy2k.messagebus;
+import erlogtrisy2k.memory;
 
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
@@ -47,7 +48,7 @@ enum Layer {
     Default,
     Block,
     BlockText,
-};
+}
 
 class CTexture: Component {
     Texture _texture = null;
@@ -63,13 +64,13 @@ class CTexture: Component {
 
     @property Texture texture(Texture t) {
         if (texture !is null) {
-            delete _texture;
+            unmake(_texture);
         }
         return _texture = t;
     }
 
     ~this() {
-        delete _texture;
+        unmake(_texture);
     }
 }
 
@@ -123,7 +124,7 @@ class TextureManager {
         if (texture == null) {
             throw new LoadImageError("could not load: " ~ path);
         }
-        tex = new Texture(TID++);
+        tex = make!Texture(TID++);
         texid_texture[tex.id] = texture;
 
         SDL_QueryTexture(get(tex), null, null, &tex.w, &tex.h);
@@ -161,7 +162,7 @@ class TextureManager {
     }
 
     Texture makeTexture(ubyte[] texbytes, int width, int height) {
-        Texture tex = new Texture(TID++);
+        Texture tex = make!Texture(TID++);
         tex.w = width;
         tex.h = height;
 
@@ -191,7 +192,7 @@ class TextureManager {
 
 TextureManager _T;
 static this() {
-    _T = new TextureManager;
+    _T = make!TextureManager;
 }
 
 

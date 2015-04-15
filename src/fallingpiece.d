@@ -10,6 +10,7 @@ import erlogtrisy2k.block;
 import erlogtrisy2k.pieceoffsets;
 import erlogtrisy2k.nextpiece;
 import erlogtrisy2k.input;
+import erlogtrisy2k.memory;
 
 import std.stdio;
 import std.random;
@@ -47,7 +48,7 @@ class SFallingPiece: System {
         _M.unregister(this);
     }
 
-    override void initialize() {
+    override void start() {
     }
     override void addObject(GameObject o) {
         if (o.has!CFallingPiece()) {
@@ -67,7 +68,7 @@ class SFallingPiece: System {
     }
 
     void nextPiece(MNextPiece msg) {
-        fallingpiece = new GameObject;
+        fallingpiece = make!GameObject;
         makeFallingPiece(fallingpiece, msg.type, grid.get!CGrid());
         setBlockPosition(fallingpiece);
     }
@@ -77,7 +78,7 @@ class SFallingPiece: System {
             return;
         }
         if (fallingpiece is null) {
-            _M.send(new MNeedNextPiece);
+            _M.send(make!MNeedNextPiece);
         }
 
         CFallingPiece fpiece = fallingpiece.get!CFallingPiece();
@@ -108,7 +109,7 @@ class SFallingPiece: System {
                 fpiece.lastdrop = frame;
             }
             else {
-                delete fallingpiece;
+                unmake(fallingpiece);
                 fallingpiece = null;
             }
         }
@@ -203,7 +204,7 @@ bool rotatePieceCW(GameObject o, CGrid grid) {
 bool rotatePieceCCW(GameObject o, CGrid grid) {
     CFallingPiece fpiece = o.get!CFallingPiece();
     int nextrotation = fpiece.rotation - 1;
-    if (nextrotation < 0) {
+    if (nextrotation <= 0) {
         nextrotation = cast(int)fpiece.offset.length;
     }
     foreach(int i, block; fpiece.blocks) {
@@ -256,7 +257,7 @@ void makeFallingPiece(GameObject o, PieceType type, CGrid grid) {
 
     fpiece.blocks.length = 4;
     foreach(i; 0..4) {
-        fpiece.blocks[i] = new GameObject;
+        fpiece.blocks[i] = make!GameObject;
         makeBlock(fpiece.blocks[i], type, fpiece.offset[0][i].x, fpiece.offset[0][i].y);
     }
 

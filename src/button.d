@@ -7,6 +7,7 @@ import erlogtrisy2k.gameobject;
 import erlogtrisy2k.texture;
 import erlogtrisy2k.input;
 import erlogtrisy2k.animation;
+import erlogtrisy2k.memory;
 
 import std.stdio;
 import std.functional;
@@ -19,9 +20,9 @@ class CButton: Component {
     void delegate() callback;
 
     ~this() {
-        delete normal;
-        delete mouseover;
-        delete clicked;
+        unmake(normal);
+        unmake(mouseover);
+        unmake(clicked);
     }
 }
 
@@ -33,13 +34,13 @@ class CAnimatedButton: Component {
 
     ~this() {
         foreach(n; normal){
-            delete n;
+            unmake(n);
         }
         foreach(m; mouseover){
-            delete m;
+            unmake(m);
         }
         foreach(c; clicked){
-            delete c;
+            unmake(c);
         }
     }
 }
@@ -195,7 +196,7 @@ void MakeAnimatedButton(GameObject o, string[] normal, string[] mouseover, strin
     anim.textures = btn.normal;
     anim.changerate = 10;
 
-    o.add(new CTexture);
+    o.add(make!CTexture);
 }
 
 

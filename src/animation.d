@@ -4,6 +4,7 @@ import erlogtrisy2k.gameobject;
 import erlogtrisy2k.system;
 import erlogtrisy2k.component;
 import erlogtrisy2k.texture;
+import erlogtrisy2k.memory;
 
 import std.stdio;
 
@@ -32,11 +33,11 @@ class SAnimation : System {
 
     }
 
-    override void initialize() {
+    override void start() {
     }
     override void addObject(GameObject o) {
         o.get!CAnimation().lastchange = lastframe;
-        o.get!CTexture().texture = new Texture(o.get!CAnimation().textures[0]);
+        o.get!CTexture().texture = make!Texture(o.get!CAnimation().textures[0]);
     }
     override void removeObject(GameObject o) {
     }
@@ -57,7 +58,7 @@ class SAnimation : System {
                 CTexture tex = o.get!CTexture();
                 anim.index++;
                 anim.index %= anim.textures.length;
-                tex.texture = new Texture(anim.textures[anim.index]);
+                tex.texture = make!Texture(anim.textures[anim.index]);
             }
         }
         lastframe = frame;
@@ -73,7 +74,7 @@ void MakeAnimation(GameObject o, string[] images) {
         anim.textures ~= _T.loadFile("resources/images/" ~ i);
     }
     anim.changerate = 10;
-    o.add(new CTexture);
+    o.add(make!CTexture);
 }
 
 

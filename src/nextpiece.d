@@ -11,6 +11,7 @@ import erlogtrisy2k.pieceoffsets;
 import erlogtrisy2k.texture;
 import erlogtrisy2k.messagebus;
 import erlogtrisy2k.fallingpiece;
+import erlogtrisy2k.memory;
 
 import std.stdio;
 import std.format;
@@ -38,7 +39,7 @@ class NextPiece {
 
     this() {
         _M.register(this, &needNextPiece);
-        nextpiece = new GameObject;
+        nextpiece = make!GameObject;
         makeNextPiece(nextpiece);
         setPieceType(nextpiece);
     }
@@ -47,7 +48,7 @@ class NextPiece {
     }
 
     void needNextPiece(MNeedNextPiece msg) {
-        _M.send(new MNextPiece(nextpiece.get!CNextPiece().type));
+        _M.send(make!MNextPiece(nextpiece.get!CNextPiece().type));
         setPieceType(nextpiece);
     }
 }
@@ -58,7 +59,7 @@ void makeNextPiece(GameObject o) {
     CNextPiece nextpiece = o.getAlways!CNextPiece();
 
     foreach(i; 0..4) {
-        nextpiece.blocks[i] = new GameObject;
+        nextpiece.blocks[i] = make!GameObject;
     }
 }
 
@@ -70,7 +71,7 @@ void setPieceType(GameObject o) {
 
     foreach(i; 0..4) {
         CTexture tex = nextpiece.blocks[i].getAlways!CTexture();
-        tex.texture = new Texture(getBlockTexture(nextpiece.type));
+        tex.texture = make!Texture(getBlockTexture(nextpiece.type));
         tex.layer = Layer.Block;
 
         CPosition pos = nextpiece.blocks[i].getAlways!CPosition();

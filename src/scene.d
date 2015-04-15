@@ -3,6 +3,7 @@ module erlogtrisy2k.scene;
 import erlogtrisy2k.engine;
 import erlogtrisy2k.gameobject;
 import erlogtrisy2k.messagebus;
+import erlogtrisy2k.memory;
 
 import std.stdio;
 import std.algorithm;
@@ -18,7 +19,7 @@ class Scene {
     }
     ~this() {
         if (inited) {
-            destroy();
+            stop();
         }
     }
 
@@ -34,7 +35,7 @@ class Scene {
         engine = e;
     }
 
-    abstract void initialize() {
+    abstract void start() {
         if (inited) {
             return;
         }
@@ -42,13 +43,13 @@ class Scene {
         _M.register(this, &objectDeleted);
         inited = true;
     }
-    void destroy() {
+    void stop() {
         if (!inited) {
             return;
         }
         _M.unregister(this);
         foreach_reverse(o; objects) {
-            delete o;
+            unmake(o);
         }
         objects = [];
         inited = false;

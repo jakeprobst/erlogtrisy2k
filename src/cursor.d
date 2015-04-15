@@ -5,6 +5,7 @@ import erlogtrisy2k.component;
 import erlogtrisy2k.gameobject;
 import erlogtrisy2k.texture;
 import erlogtrisy2k.input;
+import erlogtrisy2k.memory;
 
 import std.stdio;
 import std.functional;
@@ -32,10 +33,10 @@ class CCursor : Component {
     this() {
     }
     void destroy() {
-        delete topleft;
-        delete topright;
-        delete bottomleft;
-        delete bottomright;
+        unmake(topleft);
+        unmake(topright);
+        unmake(bottomleft);
+        unmake(bottomright);
     }
 }
 
@@ -113,21 +114,21 @@ private bool moveCursorRight(GameObject cursor) {
 void makeCursor(GameObject cursor, GameObject[] selections, int width, int height) {
     CCursor cur = cursor.getAlways!CCursor();
 
-    cur.topleft = new GameObject;
+    cur.topleft = make!GameObject;
     cur.topleft.getAlways!CTexture().texture = _T.loadFile(TOPLEFT);
-    cur.topleft.add(new CPosition);
+    cur.topleft.add(make!CPosition);
 
-    cur.topright = new GameObject;
+    cur.topright = make!GameObject;
     cur.topright.getAlways!CTexture().texture = _T.loadFile(TOPRIGHT);
-    cur.topright.add(new CPosition);
+    cur.topright.add(make!CPosition);
 
-    cur.bottomleft = new GameObject;
+    cur.bottomleft = make!GameObject;
     cur.bottomleft.getAlways!CTexture().texture = _T.loadFile(BOTTOMLEFT);
-    cur.bottomleft.add(new CPosition);
+    cur.bottomleft.add(make!CPosition);
 
-    cur.bottomright = new GameObject;
+    cur.bottomright = make!GameObject;
     cur.bottomright.getAlways!CTexture().texture = _T.loadFile(BOTTOMRIGHT);
-    cur.bottomright.add(new CPosition);
+    cur.bottomright.add(make!CPosition);
 
     cur.selections = selections;
     cur.selected = null;

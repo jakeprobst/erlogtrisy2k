@@ -17,56 +17,14 @@ const int GRIDX = 223;
 const int GRIDY = 13;
 
 
-
-
-
-
-/*class Grid {
-    GameObject blocks[HEIGHT][WIDTH]; // blocks[x][y]
-
-    this() {
-        _M.register(this, &newBlock);
-        _M.register(this, &blockMoved);
-    }
-    ~this() {
-    }
-
-
-    void newBlock(MNewBlock msg) {
-    }
-
-    void blockMoved(MBlockMoved msg) {
-    }
-
-
-
-
-
-}*/
-
-
-
-
 class CGrid: Component {
     GameObject[GRIDHEIGHT][GRIDWIDTH] blocks;
 
-
-
     this() {
     }
     ~this() {
     }
-
-
-
-
 }
-
-
-
-
-
-
 
 
 class SGrid: System {
@@ -77,12 +35,7 @@ class SGrid: System {
     }
     ~this() {
     }
-
-
-
-
-
-    override void initialize() {
+    override void start() {
     }
     override void addObject(GameObject o) {
         if (o.has!CGrid()) {

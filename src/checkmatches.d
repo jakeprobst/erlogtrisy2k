@@ -20,7 +20,7 @@ class SCheckMatches: System {
 
 
 
-    override void initialize() {
+    override void start() {
     }
     override void addObject(GameObject o) {
     }

@@ -11,7 +11,7 @@ class AvlTreeKeyError: Exception {
 }
 
 
-class AvlTree(K, V, alias bool ownData = false) {
+class AvlTree(K, V, alias cmp_lt , alias bool ownData = false) {
     class AvlNode {
         K key;
         V value;
@@ -26,19 +26,19 @@ class AvlTree(K, V, alias bool ownData = false) {
 
         ~this() {
             static if (ownData) {
-                delete key;
-                delete value;
+                destroy(key);
+                destroy(value);
             }
         }
 
         void deleteChildren() {
             if (left !is null) {
                 left.deleteChildren();
-                delete left;
+                destroy(left);
             }
             if (right !is null) {
                 right.deleteChildren();
-                delete right;
+                destroy(right);
             }
         }
 
@@ -48,17 +48,19 @@ class AvlTree(K, V, alias bool ownData = false) {
         }
     }
 
-    int delegate(K, K) cmp_lt;
+    //int delegate(K, K) cmp_lt;
     AvlNode treeroot = null;
 
-    this(int delegate(K, K) cmp) {
+    /*this(int delegate(K, K) cmp) {
         cmp_lt = cmp;
     }
+    this() {
+    }*/
 
     ~this() {
         if (treeroot !is null) {
             treeroot.deleteChildren();
-            delete treeroot;
+            destroy(treeroot);
         }
     }
 
@@ -110,10 +112,10 @@ class AvlTree(K, V, alias bool ownData = false) {
         }
         else {
             static if (ownData) {
-                delete root.value;
+                destroy(root.value);
             }
             root.value = node.value;
-            delete node;
+            destroy(node);
             return root;
         }
 
@@ -165,18 +167,18 @@ class AvlTree(K, V, alias bool ownData = false) {
         }
         else {
             if (node.left is null && node.right is null) {
-                delete node;
+                destroy(node);
                 return null;
             }
             else if (node.right is null) {
                 AvlNode tmp = node;
                 node = node.left;
-                delete tmp;
+                destroy(tmp);
             }
             else if (node.left is null) {
                 AvlNode tmp = node;
                 node = node.right;
-                delete tmp;
+                destroy(tmp);
             }
             else {
                 AvlNode tmp = _minValueNode(node.right);
@@ -291,12 +293,8 @@ class AvlTree(K, V, alias bool ownData = false) {
 }
 
 
-
-
-
-
 unittest {
-    auto tree = new AvlTree!(int, string)((a, b) => b - a);
+    auto tree = new AvlTree!(int, string, (a, b) => b - a);
 
     //     4
     // 2       6
@@ -351,6 +349,10 @@ unittest {
     tree[5] = "oldfive";
     tree[6] ~= "add";
 
+    tree.insert(12, "toomuch");
+    tree.insert(1, "notenough");
+    tree.insert(1, "replace");
+
     int keys[];
     string values[];
     foreach(k, v; tree) {
@@ -358,9 +360,9 @@ unittest {
         values ~= v;
     }
 
-    assert(keys == [2, 3, 4, 5, 6, 8]);
-    assert(values == ["two-two", "three", "newfour", "oldfive", "sixadd", "eight"]);
+    assert(keys == [1, 2, 3, 4, 5, 6, 8, 12]);
+    assert(values == ["replace", "two-two", "three", "newfour", "oldfive", "sixadd", "eight", "toomuch"]);
 
 
-    delete tree;
+    destroy(tree);
 }

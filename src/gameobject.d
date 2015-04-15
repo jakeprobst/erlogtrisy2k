@@ -2,9 +2,9 @@ module erlogtrisy2k.gameobject;
 
 import erlogtrisy2k.component;
 import erlogtrisy2k.messagebus;
+import erlogtrisy2k.memory;
 
 import std.stdio;
-import std.container;
 import std.algorithm;
 import std.string;
 
@@ -20,13 +20,13 @@ class GameObject {
     Component[] components;
 
     this() {
-        _M.send(new MNewObject(this));
+        _M.send(make!MNewObject(this));
         id = GID++;
     }
     ~this() {
-        _M.send(new MObjectDeleted(this));
+        _M.send(make!MObjectDeleted(this));
         foreach(c; components) {
-            delete c;
+            unmake(c);
         }
     }
 
@@ -37,9 +37,7 @@ class GameObject {
                 return a;
             }
         }
-        //return null;
         throw new NoComponent(T.classinfo.name);
-        //return null;
     }
 
     T getAlways(T)() {
@@ -48,7 +46,7 @@ class GameObject {
             c = get!T();
         }
         catch (NoComponent) {
-            c = new T();
+            c = make!T();
             add(c);
         }
         return c;
@@ -56,12 +54,12 @@ class GameObject {
 
     void add(Component c) {
         components ~= c;
-        _M.send(new MComponentChange(this));
+        _M.send(make!MComponentChange(this));
     }
 
     void remove(T)(T c) {
         components = components.remove(c);
-        _M.send(new MComponentChange(this));
+        _M.send(make!MComponentChange(this));
     }
 
     bool has(string id) {
